@@ -5,7 +5,10 @@
     :style="boxStyle"
     @mousedown="handleDragStart"
   >
-    <div class="content">拖拽我或角点以调整大小</div>
+    <!-- 插槽容器 -->
+    <div class="content-slot">
+      <slot></slot>
+    </div>
     <!-- 循环创建拖拽手柄 -->
     <div
       class="handle"
@@ -23,16 +26,45 @@ import { useDraggable } from '@/hooks/useDraggable'
 import { useResizable } from '@/hooks/useResizable'
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
-// 最小宽高限制
-const minWidth = 50
-const minHeight = 50
+const props = defineProps({
+  // 最小宽度限制
+  minWidth: {
+    type: Number,
+    default: 50,
+  },
+  // 最小高度限制
+  minHeight: {
+    type: Number,
+    default: 50,
+  },
+  // 初始化宽度
+  initialWidth: {
+    type: Number,
+    default: 200,
+  },
+  // 初始化高度
+  initialHeight: {
+    type: Number,
+    default: 200,
+  },
+  // 初始化上偏移
+  initialTop: {
+    type: Number,
+    default: 100,
+  },
+  // 初始化左偏移
+  initialLeft: {
+    type: Number,
+    default: 100,
+  },
+})
 
 // 默认的盒子宽高以及位置
 const box: BoxState = reactive({
-  width: 200,
-  height: 200,
-  top: 100,
-  left: 100,
+  width: props.initialWidth,
+  height: props.initialHeight,
+  top: props.initialTop,
+  left: props.initialLeft,
 })
 
 // 动态更新盒子样式的反应性对象
@@ -69,8 +101,8 @@ const { handleDragStart } = useDraggable(box, updateBoxStyle)
 // 处理调整大小的函数
 const { handleResizeStart } = useResizable(
   box,
-  minWidth,
-  minHeight,
+  props.minWidth,
+  props.minHeight,
   updateBoxStyle
 )
 
@@ -86,7 +118,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss">
 .resizable-box {
   position: absolute;
   display: flex;
@@ -108,51 +140,59 @@ onUnmounted(() => {
 .handle-top-left {
   top: -5px;
   left: -5px;
-  cursor: nw-resize;
+  cursor: nwse-resize;
 }
 .handle-top {
   top: -5px;
   left: 50%;
   transform: translateX(-50%);
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 .handle-top-right {
   top: -5px;
   right: -5px;
-  cursor: ne-resize;
+  cursor: nesw-resize;
 }
 .handle-right {
   right: -5px;
   top: 50%;
   transform: translateY(-50%);
-  cursor: e-resize;
+  cursor: ew-resize;
 }
 .handle-bottom-right {
   bottom: -5px;
   right: -5px;
-  cursor: se-resize;
+  cursor: nwse-resize;
 }
 .handle-bottom {
   bottom: -5px;
   left: 50%;
   transform: translateX(-50%);
-  cursor: s-resize;
+  cursor: ns-resize;
 }
 .handle-bottom-left {
   bottom: -5px;
   left: -5px;
-  cursor: sw-resize;
+  cursor: nesw-resize;
 }
 .handle-left {
   left: -5px;
   top: 50%;
   transform: translateY(-50%);
-  cursor: w-resize;
+  cursor: ew-resize;
 }
 
 .content {
   user-select: none;
   cursor: default;
   color: #ccc;
+}
+
+.content-slot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
