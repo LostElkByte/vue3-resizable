@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
-
+import { useDraggable } from '@/hooks/useDraggable'
 // 定义手柄方向的类型
 type HandleDirection =
   | 'top'
@@ -65,8 +65,6 @@ const handles: HandleDirection[] = [
 
 // 标记是否正在调整大小
 const resizing = ref(false)
-// 标记是否正在拖拽
-const dragging = ref(false)
 
 // 更新盒子样式的函数
 const updateBoxStyle = () => {
@@ -77,32 +75,7 @@ const updateBoxStyle = () => {
 }
 
 // 处理盒子拖拽开始的函数
-const handleDragStart = (event: MouseEvent) => {
-  dragging.value = true
-  // 存储鼠标初始位置
-  const startPosition = {
-    x: event.clientX - box.left,
-    y: event.clientY - box.top,
-  }
-
-  // 进行拖动
-  const onDragging = (moveEvent: MouseEvent) => {
-    if (!dragging.value) return
-    box.left = moveEvent.clientX - startPosition.x
-    box.top = moveEvent.clientY - startPosition.y
-    updateBoxStyle()
-  }
-
-  // 停止拖动
-  const stopDrag = () => {
-    dragging.value = false
-    window.removeEventListener('mousemove', onDragging)
-    window.removeEventListener('mouseup', stopDrag)
-  }
-
-  window.addEventListener('mousemove', onDragging)
-  window.addEventListener('mouseup', stopDrag)
-}
+const { handleDragStart } = useDraggable(box, updateBoxStyle)
 
 // 处理调整大小开始
 const handleResizeStart = (event: MouseEvent, direction: HandleDirection) => {
