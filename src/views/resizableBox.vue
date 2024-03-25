@@ -18,25 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
+import { type CSSProperties, reactive, onMounted, onUnmounted } from 'vue'
 import { useDraggable } from '@/hooks/useDraggable'
-// 定义手柄方向的类型
-type HandleDirection =
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right'
+import { useResizable } from '@/hooks/useResizable'
+import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
 // 最小宽高限制
 const minWidth = 50
 const minHeight = 50
 
 // 默认的盒子宽高以及位置
-const box = reactive({
+const box: BoxState = reactive({
   width: 200,
   height: 200,
   top: 100,
@@ -63,9 +55,6 @@ const handles: HandleDirection[] = [
   'left',
 ]
 
-// 标记是否正在调整大小
-const resizing = ref(false)
-
 // 更新盒子样式的函数
 const updateBoxStyle = () => {
   boxStyle.width = `${box.width}px`
@@ -74,131 +63,16 @@ const updateBoxStyle = () => {
   boxStyle.left = `${box.left}px`
 }
 
-// 处理盒子拖拽开始的函数
+// 处理盒子拖拽的函数
 const { handleDragStart } = useDraggable(box, updateBoxStyle)
 
-// 处理调整大小开始
-const handleResizeStart = (event: MouseEvent, direction: HandleDirection) => {
-  resizing.value = true
-
-  // 存储鼠标初始位置
-  let startPosition = { x: event.clientX, y: event.clientY }
-
-  // 根据拖拽方向调整盒子尺寸
-  const onResize = (moveEvent: MouseEvent) => {
-    if (!resizing.value) return
-
-    // 计算鼠标（或触摸点）在拖拽过程中移动的距离 (当前鼠标位置减去初始位置)
-    const dx = moveEvent.clientX - startPosition.x
-    const dy = moveEvent.clientY - startPosition.y
-
-    // 计算尝试调整后的新高度和宽度
-    const newHeight = box.height - dy
-    const newWidth = box.width - dx
-
-    // 根据不同的方向调整盒子的尺寸，并确保不小于最小尺寸
-    switch (direction) {
-      case 'top': {
-        if (newHeight >= minHeight) {
-          // 如果新高度大于等于最小高度，则正常调整
-          box.height = newHeight
-          box.top += dy
-        } else {
-          // 如果新高度小于最小高度，则将高度设置为最小高度，并调整top以适应这种改变
-          const heightDiff = box.height - minHeight
-          box.height = minHeight
-          box.top += heightDiff
-        }
-        break
-      }
-      case 'bottom':
-        box.height = Math.max(box.height + dy, minHeight)
-        break
-      case 'right':
-        box.width = Math.max(box.width + dx, minWidth)
-        break
-      case 'left': {
-        if (newWidth >= minWidth) {
-          box.width = newWidth
-          box.left += dx
-        } else {
-          const widthDiff = box.width - minWidth
-          box.width = minWidth
-          box.left += widthDiff
-        }
-        break
-      }
-      case 'top-right': {
-        if (newHeight >= minHeight) {
-          box.height = newHeight
-          box.top += dy
-        } else {
-          const heightDiff = box.height - minHeight
-          box.height = minHeight
-          box.top += heightDiff
-        }
-
-        box.width = Math.max(box.width + dx, minWidth)
-        break
-      }
-      case 'top-left': {
-        // 处理高度调整
-        if (newHeight >= minHeight) {
-          box.height = newHeight
-          box.top += dy
-        } else {
-          const heightDiff = box.height - minHeight
-          box.height = minHeight
-          box.top += heightDiff
-        }
-
-        // 处理宽度调整
-        if (newWidth >= minWidth) {
-          box.width = newWidth
-          box.left += dx
-        } else {
-          const widthDiff = box.width - minWidth
-          box.width = minWidth
-          box.left += widthDiff
-        }
-        break
-      }
-
-      case 'bottom-right':
-        box.height = Math.max(box.height + dy, minHeight)
-        box.width = Math.max(box.width + dx, minWidth)
-        break
-      case 'bottom-left': {
-        // 处理高度调整
-        box.height = Math.max(box.height + dy, minHeight)
-
-        // 处理宽度调整
-        if (newWidth >= minWidth) {
-          box.width = newWidth
-          box.left += dx
-        } else {
-          const widthDiff = box.width - minWidth
-          box.width = minWidth
-          box.left += widthDiff
-        }
-        break
-      }
-    }
-
-    startPosition = { x: moveEvent.clientX, y: moveEvent.clientY }
-    updateBoxStyle()
-  }
-
-  // 停止调整大小的操作
-  const stopResize = () => {
-    resizing.value = false
-    window.removeEventListener('mousemove', onResize)
-    window.removeEventListener('mouseup', stopResize)
-  }
-
-  window.addEventListener('mousemove', onResize)
-  window.addEventListener('mouseup', stopResize)
-}
+// 处理调整大小的函数
+const { handleResizeStart } = useResizable(
+  box,
+  minWidth,
+  minHeight,
+  updateBoxStyle
+)
 
 onMounted(() => {
   // 组件挂载时更新盒子样式

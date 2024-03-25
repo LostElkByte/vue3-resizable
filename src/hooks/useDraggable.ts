@@ -1,15 +1,13 @@
 // useDraggable.ts
 import { ref } from 'vue'
+import { type BoxState } from '@/types/resizable.type'
 /**
  * 拖动
  * @param box 盒子宽高以及位置
  * @param updateBoxStyle 动态更新盒子样式的方法
  * @returns
  */
-export function useDraggable(
-  box: { width: number; height: number; left: number; top: number },
-  updateBoxStyle: () => void
-) {
+export function useDraggable(box: BoxState, updateBoxStyle: () => void) {
   const dragging = ref(false)
   // 处理盒子拖拽开始的函数
   const handleDragStart = (event: MouseEvent) => {
