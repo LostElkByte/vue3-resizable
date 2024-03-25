@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import ResizableBox from '@/views/resizableBox.vue'
+import ResizableBox from '@/components/resizableBox.vue'
 </script>
 
 <style lang="scss" scoped></style>
