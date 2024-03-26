@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
-const resizing = ref(false)
+const resizing = ref<boolean>(false)
 
-const dragging = ref(false)
+const dragging = ref<boolean>(false)
 
 export { resizing, dragging }

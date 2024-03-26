@@ -11,7 +11,7 @@ import type { AnyTouchEvent } from 'any-touch'
  */
 export function useDraggable(
   box: BoxState,
-  updateBoxStyle: (top?: Number, left?: Number) => void
+  updateBoxStyle: (top?: number, left?: number) => void
 ) {
   // 拖动开始
   const startDrag = () => {

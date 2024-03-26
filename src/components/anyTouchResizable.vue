@@ -96,7 +96,7 @@ const handles: HandleDirection[] = [
 ]
 
 // 更新盒子样式的函数
-const updateBoxStyle = (top: Number = box.top, left: Number = box.left) => {
+const updateBoxStyle = (top: number = box.top, left: number = box.left) => {
   boxStyle.width = `${box.width}px`
   boxStyle.height = `${box.height}px`
   boxStyle.top = `${top}px`

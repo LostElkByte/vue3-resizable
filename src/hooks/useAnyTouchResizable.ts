@@ -15,7 +15,7 @@ export function useResizable(
   box: BoxState,
   minWidth: number,
   minHeight: number,
-  updateBoxStyle: (top?: Number, left?: Number) => void
+  updateBoxStyle: (top?: number, left?: number) => void
 ) {
   // 调整大小开始
   const startResize = () => {
@@ -126,7 +126,6 @@ export function useResizable(
       }
     }
 
-    // startPosition = { x: moveEvent.clientX, y: moveEvent.clientY }
     updateBoxStyle(box.top, box.left)
   }
 
