@@ -1,5 +1,8 @@
 // useDraggable.ts
 import { type BoxState } from '@/types/resizable.type'
+import { resizing, dragging } from '@/hooks/useSharedState'
+import type { AnyTouchEvent } from 'any-touch'
+
 /**
  * 拖动
  * @param box 盒子宽高以及位置
@@ -10,8 +13,18 @@ export function useDraggable(
   box: BoxState,
   updateBoxStyle: (top?: Number, left?: Number) => void
 ) {
-  // 处理盒子拖拽开始的函数
-  const onDragging = (event: any) => {
+  // 拖动开始
+  const startDrag = () => {
+    dragging.value = true
+  }
+
+  // 拖拽中
+  const onDragging = (event: AnyTouchEvent) => {
+    // 如果在进行调整大小操作 或者拖动开始状态未生效 禁用拖拽
+    if (resizing.value || !dragging.value) {
+      return
+    }
+
     // x轴位移增量+初始left偏移
     box.left += event.deltaX
     // y轴位移增量+初始top偏移
@@ -20,5 +33,10 @@ export function useDraggable(
     updateBoxStyle(box.top, box.left)
   }
 
-  return { onDragging }
+  // 拖动结束
+  const endDrag = () => {
+    dragging.value = false
+  }
+
+  return { startDrag, onDragging, endDrag }
 }

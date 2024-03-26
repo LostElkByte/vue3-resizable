@@ -5,6 +5,8 @@
     class="resizable-box"
     :style="boxStyle"
     @pan="onDragging($event)"
+    @panstart="startDrag()"
+    @panend="endDrag()"
   >
     <!-- 插槽容器 -->
     <div class="content-slot">
@@ -16,7 +18,9 @@
       v-for="handle in handles"
       :key="handle"
       :class="`handle-${handle}`"
-      @mousedown.stop.prevent="handleResizeStart($event, handle)"
+      @pan="onResize($event, handle)"
+      @panstart="startResize()"
+      @panend="endResize()"
     ></div>
   </div>
 </template>
@@ -25,7 +29,7 @@
 import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
 import AnyTouch from 'any-touch'
 import { useDraggable } from '@/hooks/useAnyTouchDraggable'
-import { useResizable } from '@/hooks/useResizable'
+import { useResizable } from '@/hooks/useAnyTouchResizable'
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
 const props = defineProps({
@@ -100,10 +104,10 @@ const updateBoxStyle = (top: Number = box.top, left: Number = box.left) => {
 }
 
 // 处理盒子拖拽的函数
-const { onDragging } = useDraggable(box, updateBoxStyle)
+const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
 
 // 处理调整大小的函数
-const { handleResizeStart } = useResizable(
+const { startResize, onResize, endResize } = useResizable(
   box,
   props.minWidth,
   props.minHeight,
