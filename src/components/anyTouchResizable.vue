@@ -22,11 +22,23 @@
       @panstart="startResize()"
       @panend="endResize()"
     ></div>
+    <!-- 链接旋转手柄的虚线元素 -->
+    <div
+      class="dashed-line"
+      :style="lineStyle"
+    ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
+import {
+  type CSSProperties,
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  computed,
+} from 'vue'
 import AnyTouch from 'any-touch'
 import { useDraggable } from '@/hooks/useAnyTouchDraggable'
 import { useResizable } from '@/hooks/useAnyTouchResizable'
@@ -65,7 +77,7 @@ const props = defineProps({
   },
 })
 
-const at = ref<null | AnyTouch>(null)
+const rotationDegree = ref(0)
 
 // 默认的盒子宽高以及位置
 const box: BoxState = reactive({
@@ -81,6 +93,7 @@ const boxStyle = reactive<CSSProperties>({
   height: `${box.height}px`,
   top: `${box.top}px`,
   left: `${box.left}px`,
+  transform: `rotate(${rotationDegree.value}deg)`,
 })
 
 // 手柄方向数组，用于v-for循环
@@ -93,7 +106,14 @@ const handles: HandleDirection[] = [
   'bottom',
   'bottom-left',
   'left',
+  'rotate',
 ]
+
+// 计算虚线样式
+const lineStyle = computed(() => ({
+  transform: `translateX(-50%) rotate(${rotationDegree.value}deg)`,
+  transformOrigin: 'bottom',
+}))
 
 // 更新盒子样式的函数
 const updateBoxStyle = (top: number = box.top, left: number = box.left) => {
@@ -113,6 +133,9 @@ const { startResize, onResize, endResize } = useResizable(
   props.minHeight,
   updateBoxStyle
 )
+
+// AnyTouch实例
+const at = ref<null | AnyTouch>(null)
 
 onMounted(() => {
   // 组件挂载时更新盒子样式
@@ -192,6 +215,22 @@ onUnmounted(() => {
   top: 50%;
   transform: translateY(-50%);
   cursor: ew-resize;
+}
+
+.handle-rotate {
+  position: absolute;
+  top: -30px; /* 手柄位于方块中上方 */
+  cursor: grab;
+}
+
+.dashed-line {
+  position: absolute;
+  top: -30px; /* 调整以使线的起点位于方块的中上方 */
+  left: 50%;
+  height: 30px; /* 这是线和手柄之间的距离 */
+  border-left: 1px dashed #ccc; /* 创建虚线效果 */
+  transform-origin: bottom;
+  transform: translateX(-50%); /* 调整线的位置使其居中 */
 }
 
 .content {

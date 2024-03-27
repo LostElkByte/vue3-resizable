@@ -124,6 +124,10 @@ export function useResizable(
         }
         break
       }
+      case 'rotate': {
+        console.log(111);
+        break
+      }
     }
 
     updateBoxStyle(box.top, box.left)

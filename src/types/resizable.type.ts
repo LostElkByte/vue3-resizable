@@ -8,6 +8,7 @@ export type HandleDirection =
   | 'top-right'
   | 'bottom-left'
   | 'bottom-right'
+  | 'rotate'
 
 // 盒子状态类型
 export interface BoxState {
