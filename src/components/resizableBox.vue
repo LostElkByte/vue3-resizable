@@ -35,38 +35,34 @@ import { useResizable } from '@/hooks/useResizable'
 // 导入公共类型定义
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
-// 定义组件接收的props
-const props = defineProps({
+// props 接口
+interface Props {
   // 最小宽度限制
-  minWidth: {
-    type: Number,
-    default: 50,
-  },
+  minWidth?: number
   // 最小高度限制
-  minHeight: {
-    type: Number,
-    default: 50,
-  },
+  minHeight?: number
+  // 最大宽度限制
+  maxWidth?: number
+  // 最大高度限制
+  maxHeight?: number
   // 初始化宽度
-  initialWidth: {
-    type: Number,
-    default: 200,
-  },
+  initialWidth?: number
   // 初始化高度
-  initialHeight: {
-    type: Number,
-    default: 200,
-  },
+  initialHeight?: number
   // 初始化上偏移
-  initialTop: {
-    type: Number,
-    default: 100,
-  },
+  initialTop?: number
   // 初始化左偏移
-  initialLeft: {
-    type: Number,
-    default: 100,
-  },
+  initialLeft?: number
+}
+
+// 定义组件接收的props
+const props = withDefaults(defineProps<Props>(), {
+  minWidth: 50,
+  minHeight: 50,
+  initialWidth: 200,
+  initialHeight: 200,
+  initialTop: 100,
+  initialLeft: 100,
 })
 
 // 盒子的尺寸和位置
