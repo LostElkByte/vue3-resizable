@@ -1,9 +1,12 @@
 <template>
   <!-- 可调整大小的盒子，支持通过拖拽边缘或角落来改变尺寸 -->
   <div
+    id="resizable-box"
     class="resizable-box"
     :style="boxStyle"
-    @mousedown="handleDragStart"
+    @pan="onDragging($event)"
+    @panstart="startDrag()"
+    @panend="endDrag()"
   >
     <!-- 插槽容器 -->
     <div class="content-slot">
@@ -15,13 +18,22 @@
       v-for="handle in handles"
       :key="handle"
       :class="`handle-${handle}`"
-      @mousedown.stop.prevent="handleResizeStart($event, handle)"
+      @pan="onResize($event, handle)"
+      @panstart="startResize()"
+      @panend="endResize()"
     ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, reactive, onMounted, onUnmounted } from 'vue'
+import {
+  type CSSProperties,
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+} from 'vue'
+import AnyTouch from 'any-touch'
 import { useDraggable } from '@/hooks/useDraggable'
 import { useResizable } from '@/hooks/useResizable'
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
@@ -87,6 +99,7 @@ const handles: HandleDirection[] = [
   'left',
 ]
 
+
 // 更新盒子样式的函数
 const updateBoxStyle = () => {
   boxStyle.width = `${box.width}px`
@@ -96,25 +109,32 @@ const updateBoxStyle = () => {
 }
 
 // 处理盒子拖拽的函数
-const { handleDragStart } = useDraggable(box, updateBoxStyle)
+const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
 
 // 处理调整大小的函数
-const { handleResizeStart } = useResizable(
+const { startResize, onResize, endResize } = useResizable(
   box,
   props.minWidth,
   props.minHeight,
   updateBoxStyle
 )
 
+// AnyTouch实例
+const at = ref<null | AnyTouch>(null)
+
 onMounted(() => {
   // 组件挂载时更新盒子样式
   updateBoxStyle()
+
+  const el = document.getElementById('resizable-box') as HTMLElement
+  at.value = new AnyTouch(el)
 })
 
 onUnmounted(() => {
   // 组件卸载时移除事件监听器，防止内存泄漏
   window.removeEventListener('mousemove', () => {})
   window.removeEventListener('mouseup', () => {})
+  at.value?.destroy()
 })
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import ResizableBox from './views/resizableBox.vue'
 // import ParentContainer  from './test/parentContainer.vue'
-import AnyTouchResizable from '@/components/anyTouchResizable.vue'
+import AnyTouchResizable from '@/components/resizableBox.vue'
 </script>
 
 <template>

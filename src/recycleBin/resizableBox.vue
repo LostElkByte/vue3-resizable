@@ -1,12 +1,9 @@
 <template>
   <!-- 可调整大小的盒子，支持通过拖拽边缘或角落来改变尺寸 -->
   <div
-    id="resizable-box"
     class="resizable-box"
     :style="boxStyle"
-    @pan="onDragging($event)"
-    @panstart="startDrag()"
-    @panend="endDrag()"
+    @mousedown="handleDragStart"
   >
     <!-- 插槽容器 -->
     <div class="content-slot">
@@ -18,30 +15,15 @@
       v-for="handle in handles"
       :key="handle"
       :class="`handle-${handle}`"
-      @pan="onResize($event, handle)"
-      @panstart="startResize()"
-      @panend="endResize()"
-    ></div>
-    <!-- 链接旋转手柄的虚线元素 -->
-    <div
-      class="dashed-line"
-      :style="lineStyle"
+      @mousedown.stop.prevent="handleResizeStart($event, handle)"
     ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  type CSSProperties,
-  ref,
-  reactive,
-  onMounted,
-  onUnmounted,
-  computed,
-} from 'vue'
-import AnyTouch from 'any-touch'
-import { useDraggable } from '@/hooks/useAnyTouchDraggable'
-import { useResizable } from '@/hooks/useAnyTouchResizable'
+import { type CSSProperties, reactive, onMounted, onUnmounted } from 'vue'
+import { useDraggable } from '@/recycleBin/useDraggable'
+import { useResizable } from '@/recycleBin/useResizable'
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
 const props = defineProps({
@@ -77,8 +59,6 @@ const props = defineProps({
   },
 })
 
-const rotationDegree = ref(0)
-
 // 默认的盒子宽高以及位置
 const box: BoxState = reactive({
   width: props.initialWidth,
@@ -93,7 +73,6 @@ const boxStyle = reactive<CSSProperties>({
   height: `${box.height}px`,
   top: `${box.top}px`,
   left: `${box.left}px`,
-  transform: `rotate(${rotationDegree.value}deg)`,
 })
 
 // 手柄方向数组，用于v-for循环
@@ -106,50 +85,36 @@ const handles: HandleDirection[] = [
   'bottom',
   'bottom-left',
   'left',
-  'rotate',
 ]
 
-// 计算虚线样式
-const lineStyle = computed(() => ({
-  transform: `translateX(-50%) rotate(${rotationDegree.value}deg)`,
-  transformOrigin: 'bottom',
-}))
-
 // 更新盒子样式的函数
-const updateBoxStyle = (top: number = box.top, left: number = box.left) => {
+const updateBoxStyle = () => {
   boxStyle.width = `${box.width}px`
   boxStyle.height = `${box.height}px`
-  boxStyle.top = `${top}px`
-  boxStyle.left = `${left}px`
+  boxStyle.top = `${box.top}px`
+  boxStyle.left = `${box.left}px`
 }
 
 // 处理盒子拖拽的函数
-const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
+const { handleDragStart } = useDraggable(box, updateBoxStyle)
 
 // 处理调整大小的函数
-const { startResize, onResize, endResize } = useResizable(
+const { handleResizeStart } = useResizable(
   box,
   props.minWidth,
   props.minHeight,
   updateBoxStyle
 )
 
-// AnyTouch实例
-const at = ref<null | AnyTouch>(null)
-
 onMounted(() => {
   // 组件挂载时更新盒子样式
   updateBoxStyle()
-
-  const el = document.getElementById('resizable-box') as HTMLElement
-  at.value = new AnyTouch(el)
 })
 
 onUnmounted(() => {
   // 组件卸载时移除事件监听器，防止内存泄漏
   window.removeEventListener('mousemove', () => {})
   window.removeEventListener('mouseup', () => {})
-  at.value?.destroy()
 })
 </script>
 
@@ -217,22 +182,6 @@ onUnmounted(() => {
   cursor: ew-resize;
 }
 
-.handle-rotate {
-  position: absolute;
-  top: -30px; /* 手柄位于方块中上方 */
-  cursor: grab;
-}
-
-.dashed-line {
-  position: absolute;
-  top: -30px; /* 调整以使线的起点位于方块的中上方 */
-  left: 50%;
-  height: 30px; /* 这是线和手柄之间的距离 */
-  border-left: 1px dashed #ccc; /* 创建虚线效果 */
-  transform-origin: bottom;
-  transform: translateX(-50%); /* 调整线的位置使其居中 */
-}
-
 .content {
   user-select: none;
   cursor: default;
@@ -247,3 +196,4 @@ onUnmounted(() => {
   justify-content: center;
 }
 </style>
+@/recycleBin/useDraggable@/recycleBin/useResizable
