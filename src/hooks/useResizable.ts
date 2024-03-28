@@ -104,12 +104,12 @@ function adjustSize(
 }
 
 /**
- * 调整大小
- * @param box 盒子宽高以及位置
- * @param minWidth 最小宽度限制
- * @param minHeight 最小高度限制
- * @param updateBoxStyle 动态更新盒子样式的方法
- * @returns
+ * 提供可调整大小的功能，允许通过拖拽改变盒子的尺寸
+ * @param {BoxState} box 盒子宽高以及位置
+ * @param {number} minWidth 最小宽度限制
+ * @param {number} minHeight 最小高度限制
+ * @param {Function} updateBoxStyle 一个回调函数，用于在盒子尺寸或位置变化后更新其样式
+ * @returns {Object} 包含`onResize`、`startResize`和`endResize`三个方法的对象，用于处理拖拽开始、进行中和结束时的逻辑。
  */
 export function useResizable(
   box: BoxState,
@@ -117,32 +117,48 @@ export function useResizable(
   minHeight: number,
   updateBoxStyle: () => void
 ) {
-  // 调整大小开始
+  // 用于跟踪requestAnimationFrame的ID，以便在需要时取消排队的帧。
+  let frame: number | null = null
+
+  // 在调整大小开始时
   const startResize = () => {
+    // 设置一个标志为true，表示正在进行尺寸调整
     resizing.value = true
   }
 
-  // 调整大小中
+  // 在调整大小进行中
   const onResize = (event: AnyTouchEvent, direction: HandleDirection) => {
-    // 如果调整大小状态未生效 禁用拖拽
-    if (!resizing.value) {
+    // 如果正在进行拖拽操作或已经有一个调整操作在进行中（即frame不为null），则忽略此次操作。
+    if (!resizing.value || frame) {
       return
     }
 
-    // x/y轴位移增量
-    const deltaX = event.deltaX
-    const deltaY = event.deltaY
-
-    // 根据拖动方向调整盒子大小
-    adjustSize(direction, deltaX, deltaY, box, minWidth, minHeight)
-
-    // 更新盒子样式
-    updateBoxStyle()
+    frame = requestAnimationFrame(() => {
+      // 根据拖动方向调整盒子大小
+      adjustSize(
+        direction,
+        event.deltaX,
+        event.deltaY,
+        box,
+        minWidth,
+        minHeight
+      )
+      // 更新盒子样式
+      updateBoxStyle()
+      // 重置frame变量，允许下一个调整大小操作的帧被排队
+      frame = null
+    })
   }
 
-  // 调整大小结束
+  // 调整大小结束时
   const endResize = () => {
+    // 重置调整大小的状态
     resizing.value = false
+    if (frame !== null) {
+      // 取消排队的帧，以防止额外的回调执行
+      cancelAnimationFrame(frame)
+      frame = null
+    }
   }
 
   return { onResize, startResize, endResize }
