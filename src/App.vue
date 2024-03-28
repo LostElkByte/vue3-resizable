@@ -1,13 +1,9 @@
 <script setup lang="ts">
-// import ResizableBox from './views/resizableBox.vue'
-// import ParentContainer  from './test/parentContainer.vue'
-import AnyTouchResizable from '@/components/resizableBox.vue'
+import ResizableBox from '@/components/resizableBox.vue'
 </script>
 
 <template>
-  <!-- <ResizableBox></ResizableBox> -->
-  <!-- <ParentContainer></ParentContainer> -->
-  <AnyTouchResizable></AnyTouchResizable>
+  <ResizableBox :minWidth="500" :style="{background: '#545454a6', minWidth: 500}"></ResizableBox>
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@
   <div
     id="resizable-box"
     class="resizable-box"
-    :style="boxStyle"
+    :style="[boxStyle, style]"
     @pan="onDragging($event)"
     @panstart="startDrag()"
     @panend="endDrag()"
@@ -53,6 +53,8 @@ interface Props {
   initialTop?: number
   // 初始化左偏移
   initialLeft?: number
+  // 容器样式
+  style?: CSSProperties
 }
 
 // 定义组件接收的props
@@ -67,8 +69,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 // 盒子的尺寸和位置
 const box: BoxState = reactive({
-  width: props.initialWidth,
-  height: props.initialHeight,
+  width:
+    props.minWidth > props.initialWidth ? props.minWidth : props.initialWidth,
+  height:
+    props.minHeight > props.initialHeight
+      ? props.minHeight
+      : props.initialHeight,
   top: props.initialTop,
   left: props.initialLeft,
 })
