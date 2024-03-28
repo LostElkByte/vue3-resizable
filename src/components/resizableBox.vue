@@ -8,11 +8,11 @@
     @panstart="startDrag()"
     @panend="endDrag()"
   >
-    <!-- 插槽容器 -->
+    <!-- 插槽：用于插入自定义内容 -->
     <div class="content-slot">
       <slot></slot>
     </div>
-    <!-- 循环创建拖拽手柄 -->
+    <!-- 循环生成可拖拽的手柄，用于调整盒子大小 -->
     <div
       class="handle"
       v-for="handle in handles"
@@ -26,18 +26,16 @@
 </template>
 
 <script setup lang="ts">
-import {
-  type CSSProperties,
-  ref,
-  reactive,
-  onMounted,
-  onUnmounted,
-} from 'vue'
+import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
+// 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from 'any-touch'
+// 导入自定义钩子：用于实现拖拽和调整大小功能
 import { useDraggable } from '@/hooks/useDraggable'
 import { useResizable } from '@/hooks/useResizable'
+// 导入公共类型定义
 import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
+// 定义组件接收的props
 const props = defineProps({
   // 最小宽度限制
   minWidth: {
@@ -71,7 +69,7 @@ const props = defineProps({
   },
 })
 
-// 默认的盒子宽高以及位置
+// 盒子的尺寸和位置
 const box: BoxState = reactive({
   width: props.initialWidth,
   height: props.initialHeight,
@@ -79,7 +77,7 @@ const box: BoxState = reactive({
   left: props.initialLeft,
 })
 
-// 动态更新盒子样式的反应性对象
+// 盒子样式的响应式对象
 const boxStyle = reactive<CSSProperties>({
   width: `${box.width}px`,
   height: `${box.height}px`,
@@ -99,8 +97,9 @@ const handles: HandleDirection[] = [
   'left',
 ]
 
-
-// 更新盒子样式的函数
+/**
+ * 更新盒子样式
+ */
 const updateBoxStyle = () => {
   boxStyle.width = `${box.width}px`
   boxStyle.height = `${box.height}px`
@@ -108,10 +107,10 @@ const updateBoxStyle = () => {
   boxStyle.left = `${box.left}px`
 }
 
-// 处理盒子拖拽的函数
+// 导入处理拖拽逻辑的方法
 const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
 
-// 处理调整大小的函数
+// 导入处理调整大小的方法
 const { startResize, onResize, endResize } = useResizable(
   box,
   props.minWidth,
@@ -119,26 +118,26 @@ const { startResize, onResize, endResize } = useResizable(
   updateBoxStyle
 )
 
-// AnyTouch实例
+// 初始化AnyTouch实例以处理触摸事件
 const at = ref<null | AnyTouch>(null)
 
 onMounted(() => {
   // 组件挂载时更新盒子样式
   updateBoxStyle()
 
+  // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素
   const el = document.getElementById('resizable-box') as HTMLElement
   at.value = new AnyTouch(el)
 })
 
 onUnmounted(() => {
-  // 组件卸载时移除事件监听器，防止内存泄漏
-  window.removeEventListener('mousemove', () => {})
-  window.removeEventListener('mouseup', () => {})
+  // 组件卸载时，销毁AnyTouch实例以清理资源
   at.value?.destroy()
 })
 </script>
 
 <style lang="scss">
+/* 主容器样式: 实现可调整大小的盒子的基本布局和外观 */
 .resizable-box {
   position: absolute;
   display: flex;
@@ -149,65 +148,62 @@ onUnmounted(() => {
   border: 1px dashed #ccc;
 }
 
+/* 调整手柄样式: 用于拖拽改变盒子大小 */
 .handle {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #ccc;
-  z-index: 10;
+  width: 10px; /* 手柄宽度 */
+  height: 10px; /* 手柄高度 */
+  background-color: #ccc; /* 手柄背景颜色 */
+  z-index: 10; /* 确保手柄在盒子之上 */
+
+  /* 手柄位置样式: 根据手柄的具体位置调整 */
+  &-top-left {
+    top: -5px;
+    left: -5px;
+    cursor: nwse-resize;
+  }
+  &-top {
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+  }
+  &-top-right {
+    top: -5px;
+    right: -5px;
+    cursor: nesw-resize;
+  }
+  &-right {
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: ew-resize;
+  }
+  &-bottom-right {
+    bottom: -5px;
+    right: -5px;
+    cursor: nwse-resize;
+  }
+  &-bottom {
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+  }
+  &-bottom-left {
+    bottom: -5px;
+    left: -5px;
+    cursor: nesw-resize;
+  }
+  &-left {
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: ew-resize;
+  }
 }
 
-.handle-top-left {
-  top: -5px;
-  left: -5px;
-  cursor: nwse-resize;
-}
-.handle-top {
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  cursor: ns-resize;
-}
-.handle-top-right {
-  top: -5px;
-  right: -5px;
-  cursor: nesw-resize;
-}
-.handle-right {
-  right: -5px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: ew-resize;
-}
-.handle-bottom-right {
-  bottom: -5px;
-  right: -5px;
-  cursor: nwse-resize;
-}
-.handle-bottom {
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  cursor: ns-resize;
-}
-.handle-bottom-left {
-  bottom: -5px;
-  left: -5px;
-  cursor: nesw-resize;
-}
-.handle-left {
-  left: -5px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: ew-resize;
-}
-
-.content {
-  user-select: none;
-  cursor: default;
-  color: #ccc;
-}
-
+/* 插槽容器样式: 用于自定义内容的布局 */
 .content-slot {
   width: 100%;
   height: 100%;

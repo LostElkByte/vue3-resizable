@@ -7,9 +7,9 @@ import { resizing } from '@/hooks/useSharedState'
  * 根据垂直方向的位移调整盒子的高度和顶部位置。
  * 如果调整后的高度小于最小高度限制，则将高度设置为最小高度，并相应调整顶部位置。
  *
- * @param {number} deltaY 垂直方向上的位移量，向上拖动为负，向下拖动为正。
- * @param {BoxState} box 盒子的当前状态，包括高度和顶部位置。
- * @param {number} minHeight 盒子的最小高度限制。
+ * @param {number} deltaY - 垂直方向上的位移量，向上拖动为负，向下拖动为正。
+ * @param {BoxState} box - 盒子的当前状态，包括高度和顶部位置。
+ * @param {number} minHeight - 盒子的最小高度限制。
  */
 function adjustHeightAndTop(deltaY: number, box: BoxState, minHeight: number) {
   if (box.height - deltaY >= minHeight) {
@@ -28,9 +28,9 @@ function adjustHeightAndTop(deltaY: number, box: BoxState, minHeight: number) {
  * 根据水平方向的位移调整盒子的宽度和左侧位置。
  * 如果调整后的宽度小于最小宽度限制，则将宽度设置为最小宽度，并相应调整左侧位置。
  *
- * @param {number} deltaX 水平方向上的位移量，向左拖动为负，向右拖动为正。
- * @param {BoxState} box 盒子的当前状态，包括宽度和左侧位置。
- * @param {number} minWidth 盒子的最小宽度限制。
+ * @param {number} deltaX - 水平方向上的位移量，向左拖动为负，向右拖动为正。
+ * @param {BoxState} box - 盒子的当前状态，包括宽度和左侧位置。
+ * @param {number} minWidth - 盒子的最小宽度限制。
  */
 function adjustWidthAndLeft(deltaX: number, box: BoxState, minWidth: number) {
   if (box.width - deltaX >= minWidth) {
@@ -47,12 +47,12 @@ function adjustWidthAndLeft(deltaX: number, box: BoxState, minWidth: number) {
 
 /**
  * 根据拖动方向调整盒子大小。
- * @param {HandleDirection} direction 拖动方向
- * @param {number} deltaX X轴上的位移
- * @param {number} deltaY Y轴上的位移
- * @param {BoxState} box 盒子状态
- * @param {number} minWidth 最小宽度
- * @param {number} minHeight 最小高度
+ * @param {HandleDirection} direction - 拖动方向
+ * @param {number} deltaX - X轴上的位移
+ * @param {number} deltaY - Y轴上的位移
+ * @param {BoxState} box - 盒子状态
+ * @param {number} minWidth - 最小宽度
+ * @param {number} minHeight - 最小高度
  */
 function adjustSize(
   direction: HandleDirection,
@@ -105,10 +105,10 @@ function adjustSize(
 
 /**
  * 提供可调整大小的功能，允许通过拖拽改变盒子的尺寸
- * @param {BoxState} box 盒子宽高以及位置
- * @param {number} minWidth 最小宽度限制
- * @param {number} minHeight 最小高度限制
- * @param {Function} updateBoxStyle 一个回调函数，用于在盒子尺寸或位置变化后更新其样式
+ * @param {BoxState} box - 盒子宽高以及位置
+ * @param {number} minWidth - 最小宽度限制
+ * @param {number} minHeight - 最小高度限制
+ * @param {Function} updateBoxStyle - 一个回调函数，用于在盒子尺寸或位置变化后更新其样式
  * @returns {Object} 包含`onResize`、`startResize`和`endResize`三个方法的对象，用于处理拖拽开始、进行中和结束时的逻辑。
  */
 export function useResizable(
