@@ -10,6 +10,8 @@ import ResizableBox from '@/components/resizableBox.vue'
     :minHeight="100"
     :maxWidth="300"
     :maxHeight="300"
+    :showDimension="false"
+    :showPosition="true"
   ></ResizableBox>
 </template>
 

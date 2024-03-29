@@ -23,6 +23,15 @@
       @panstart="startResize()"
       @panend="endResize()"
     ></div>
+    <!-- 实时尺寸/位置信息显示面板 -->
+    <div
+      v-if="showDimension || showPosition"
+      class="dimension"
+    >
+      <span v-if="showDimension">Size: {{ box.width }} × {{ box.height }}</span>
+      <span v-if="showPosition">Top: {{ box.top }}</span>
+      <span v-if="showPosition">Left: {{ box.left }}</span>
+    </div>
   </div>
 </template>
 
@@ -60,6 +69,10 @@ interface Props {
   handleStyle?: CSSProperties
   /** 宽高单位, 可以是 'px' | 'rem' */
   cssUnit?: 'px' | 'rem'
+  /** 显示尺寸信息, 默认是false */
+  showDimension?: boolean
+  /** 显示位置信息, 默认是false */
+  showPosition?: boolean
 }
 
 // 定义组件接收的props
@@ -71,6 +84,8 @@ const props = withDefaults(defineProps<Props>(), {
   initialTop: 100,
   initialLeft: 100,
   cssUnit: 'px',
+  showDimension: false,
+  showPosition: false,
 })
 
 /**
@@ -264,6 +279,26 @@ onUnmounted(() => {
     top: 50%;
     transform: translateY(-50%);
     cursor: ew-resize;
+  }
+}
+
+/** 尺寸面板 */
+.dimension {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -30px;
+  border-radius: 2px;
+  padding: 1px 10px;
+  background-color: #4af;
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 12px;
+  span {
+    font-weight: bold;
+  }
+  span + span {
+    padding-left: 6px;
   }
 }
 
