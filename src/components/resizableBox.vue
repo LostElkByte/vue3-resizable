@@ -37,23 +37,23 @@ import { type HandleDirection, type BoxState } from '@/types/resizable.type'
 
 // props 接口
 interface Props {
-  // 最小宽度限制
+  /** 最小宽度限制, 应 > 0 && < maxWidth && < initialWidth */
   minWidth?: number
-  // 最小高度限制
+  /** 最小高度限制, 应 > 0 && < maxHeight && < initialHeight */
   minHeight?: number
-  // 最大宽度限制
+  /** 最大宽度限制, 应 > minWidth && > initialWidth */
   maxWidth?: number
-  // 最大高度限制
+  /** 最大高度限制, 应 > minHeight && > initialHeight */
   maxHeight?: number
-  // 初始化宽度
+  /** 初始化宽度, 应 > 0 && > minWidth && < maxWidth */
   initialWidth?: number
-  // 初始化高度
+  /** 初始化高度, 应 > 0 && > minHeight && < maxHeight */
   initialHeight?: number
-  // 初始化上偏移
+  /** 初始化上偏移 */
   initialTop?: number
-  // 初始化左偏移
+  /** 初始化左偏移 */
   initialLeft?: number
-  // 容器样式
+  /** 容器样式, 应为一个CSS对象 */
   style?: CSSProperties
 }
 
@@ -67,14 +67,65 @@ const props = withDefaults(defineProps<Props>(), {
   initialLeft: 100,
 })
 
+/**
+ * 宽度与高度的边界控制警告
+ */
+const boundaryWarning = (widthOrHeight: 'Width' | 'Height') => {
+  // 最小宽/高、最大宽/高、初始化宽/高需要大于0
+  if (
+    props[`min${widthOrHeight}`] <= 0 ||
+    props[`initial${widthOrHeight}`] <= 0 ||
+    (props[`max${widthOrHeight}`] && props[`max${widthOrHeight}`]! <= 0)
+  ) {
+    console.error(
+      'The minimum width/height, maximum width/height, and initial width/height must be greater than 0'
+    )
+  }
+  // 最小高/宽度不能大于初始化高/宽度
+  if (props[`min${widthOrHeight}`] > props[`initial${widthOrHeight}`])
+    console.error(
+      `The min${widthOrHeight} cannot be greater than the initial${widthOrHeight}!`
+    )
+  // 初始化高/宽度不能大于最大高/宽度
+  if (
+    props[`max${widthOrHeight}`] &&
+    props[`initial${widthOrHeight}`] > props[`max${widthOrHeight}`]!
+  )
+    console.error('The initialHeight cannot be greater than the maxHeight!')
+  // 最小高/宽度不能大于最大高/宽度
+  if (
+    props[`max${widthOrHeight}`] &&
+    props[`min${widthOrHeight}`] > props[`max${widthOrHeight}`]!
+  )
+    console.error('The minHeight cannot be greater than the maxHeight!')
+}
+
+/**
+ * 计算初始化高度
+ */
+const calculateInitialHeight = () => {
+  boundaryWarning('Height')
+  return Math.min(
+    Math.max(props.initialHeight, props.minHeight),
+    props.maxHeight || Infinity
+  )
+}
+
+/**
+ * 计算初始化宽度
+ */
+const calculateInitialWidth = () => {
+  boundaryWarning('Width')
+  return Math.min(
+    Math.max(props.initialWidth, props.minWidth),
+    props.maxWidth || Infinity
+  )
+}
+
 // 盒子的尺寸和位置
 const box: BoxState = reactive({
-  width:
-    props.minWidth > props.initialWidth ? props.minWidth : props.initialWidth,
-  height:
-    props.minHeight > props.initialHeight
-      ? props.minHeight
-      : props.initialHeight,
+  width: calculateInitialWidth(),
+  height: calculateInitialHeight(),
   top: props.initialTop,
   left: props.initialLeft,
 })
@@ -117,6 +168,8 @@ const { startResize, onResize, endResize } = useResizable(
   box,
   props.minWidth,
   props.minHeight,
+  props.maxWidth,
+  props.maxHeight,
   updateBoxStyle
 )
 
