@@ -54,7 +54,8 @@ interface Props {
   /** 初始化左偏移 */
   initialLeft?: number
   /** 容器样式, 应为一个CSS对象 */
-  style?: CSSProperties
+  style?: CSSProperties,
+  cssUnit?: 'px' | 'rem'
 }
 
 // 定义组件接收的props
@@ -65,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   initialHeight: 200,
   initialTop: 100,
   initialLeft: 100,
+  cssUnit: 'px'
 })
 
 /**
@@ -132,8 +134,8 @@ const box: BoxState = reactive({
 
 // 盒子样式的响应式对象
 const boxStyle = reactive<CSSProperties>({
-  width: `${box.width}px`,
-  height: `${box.height}px`,
+  width: `${box.width}${props.cssUnit}`,
+  height: `${box.height}${props.cssUnit}`,
   top: `${box.top}px`,
   left: `${box.left}px`,
 })
@@ -154,8 +156,8 @@ const handles: HandleDirection[] = [
  * 更新盒子样式
  */
 const updateBoxStyle = () => {
-  boxStyle.width = `${box.width}px`
-  boxStyle.height = `${box.height}px`
+  boxStyle.width = `${box.width}${props.cssUnit}`
+  boxStyle.height = `${box.height}${props.cssUnit}`
   boxStyle.top = `${box.top}px`
   boxStyle.left = `${box.left}px`
 }

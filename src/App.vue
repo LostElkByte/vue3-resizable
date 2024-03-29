@@ -3,7 +3,7 @@ import ResizableBox from '@/components/resizableBox.vue'
 </script>
 
 <template>
-  <ResizableBox :maxWidth="300" :maxHeight="300" :style="{background: '#545454a6', minWidth: 500}"></ResizableBox>
+  <ResizableBox :initialWidth="200" :initialHeight="200" :minWidth="100" :minHeight="100"  :maxWidth="300" :maxHeight="300" :style="{background: '#545454a6'}"></ResizableBox>
 </template>
 
 <style scoped>
