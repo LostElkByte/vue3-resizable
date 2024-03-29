@@ -17,6 +17,7 @@
       class="handle"
       v-for="handle in handles"
       :key="handle"
+      :style="handleStyle"
       :class="`handle-${handle}`"
       @pan="onResize($event, handle)"
       @panstart="startResize()"
@@ -54,7 +55,10 @@ interface Props {
   /** 初始化左偏移 */
   initialLeft?: number
   /** 容器样式, 应为一个CSS对象 */
-  style?: CSSProperties,
+  style?: CSSProperties
+  /** 拖拽点样式, 应为一个CSS对象 */
+  handleStyle?: CSSProperties
+  /** 宽高单位, 可以是 'px' | 'rem' */
   cssUnit?: 'px' | 'rem'
 }
 
@@ -66,7 +70,7 @@ const props = withDefaults(defineProps<Props>(), {
   initialHeight: 200,
   initialTop: 100,
   initialLeft: 100,
-  cssUnit: 'px'
+  cssUnit: 'px',
 })
 
 /**
@@ -140,6 +144,16 @@ const boxStyle = reactive<CSSProperties>({
   left: `${box.left}px`,
 })
 
+/**
+ * 更新盒子样式
+ */
+const updateBoxStyle = () => {
+  boxStyle.width = `${box.width}${props.cssUnit}`
+  boxStyle.height = `${box.height}${props.cssUnit}`
+  boxStyle.top = `${box.top}px`
+  boxStyle.left = `${box.left}px`
+}
+
 // 手柄方向数组，用于v-for循环
 const handles: HandleDirection[] = [
   'top-left',
@@ -151,16 +165,6 @@ const handles: HandleDirection[] = [
   'bottom-left',
   'left',
 ]
-
-/**
- * 更新盒子样式
- */
-const updateBoxStyle = () => {
-  boxStyle.width = `${box.width}${props.cssUnit}`
-  boxStyle.height = `${box.height}${props.cssUnit}`
-  boxStyle.top = `${box.top}px`
-  boxStyle.left = `${box.left}px`
-}
 
 // 导入处理拖拽逻辑的方法
 const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
@@ -202,15 +206,18 @@ onUnmounted(() => {
   align-items: center;
   cursor: move;
   user-select: none;
-  border: 1px dashed #ccc;
+  border: 1px solid #4af;
+  background-color: #ffffff13;
 }
 
 /* 调整手柄样式: 用于拖拽改变盒子大小 */
 .handle {
   position: absolute;
-  width: 10px; /* 手柄宽度 */
-  height: 10px; /* 手柄高度 */
-  background-color: #ccc; /* 手柄背景颜色 */
+  width: 10px;
+  height: 10px;
+  background-color: #4af;
+  border-radius: 50%;
+  border: 1px solid #fff;
   z-index: 10; /* 确保手柄在盒子之上 */
 
   /* 手柄位置样式: 根据手柄的具体位置调整 */
