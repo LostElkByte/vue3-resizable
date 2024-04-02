@@ -52,7 +52,7 @@ import AnyTouch from 'any-touch'
 import { useDraggable } from './hooks/useDraggable'
 import { useResizable } from './hooks/useResizable'
 // 导入公共类型定义
-import { type BoxState } from '../types/resizable.type'
+import { type BoxState } from './types/resizable.type'
 // 导入初始化hooks
 import {
   calculateInitialHeight,
