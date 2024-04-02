@@ -11,7 +11,7 @@ import ResizableBox from '@/components/resizableBox.vue'
     :showDimension="true"
     :showPosition="true"
   >
-    <!-- <div style="width: 300px; height: 300px;">
+    <div>
       <span>lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk</span>
       <img
         width="100px"
@@ -20,7 +20,7 @@ import ResizableBox from '@/components/resizableBox.vue'
         alt=""
         srcset=""
       />
-    </div> -->
+    </div>
 
     <!-- <div style="width: 300px; height: 300px;">
       <img
