@@ -1,7 +1,7 @@
 // useResizable.ts
-import { type HandleDirection, type BoxState } from '@/types/resizable.type'
+import { type HandleDirection, type BoxState } from '../../types/resizable.type'
 import type { AnyTouchEvent } from 'any-touch'
-import { resizing } from '@/hooks/useSharedState'
+import { resizing } from '../hooks/useSharedState'
 
 /**
  * 根据垂直方向的位移调整盒子的高度和顶部位置

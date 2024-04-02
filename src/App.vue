@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ResizableBox from '@/components/resizableBox.vue'
+import ResizableBox from '../package/ElkResize.vue'
 </script>
 
 <template>

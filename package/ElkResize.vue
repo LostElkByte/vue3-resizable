@@ -49,19 +49,19 @@ import {
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from 'any-touch'
 // 导入自定义钩子：用于实现拖拽和调整大小功能
-import { useDraggable } from '@/hooks/useDraggable'
-import { useResizable } from '@/hooks/useResizable'
+import { useDraggable } from './hooks/useDraggable'
+import { useResizable } from './hooks/useResizable'
 // 导入公共类型定义
-import { type BoxState } from '@/types/resizable.type'
+import { type BoxState } from '../types/resizable.type'
 // 导入初始化hooks
 import {
   calculateInitialHeight,
   calculateInitialWidth,
   handles,
   updateBoxSizeAfterAllElementsLoad,
-} from '@/hooks/useInitialize'
+} from './hooks/useInitialize'
 // 导入props
-import { defaultProps, type Props } from '@/hooks/useProps'
+import { defaultProps, type Props } from './hooks/useProps'
 
 // 定义props
 const props = withDefaults(defineProps<Props>(), defaultProps)
