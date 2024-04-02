@@ -1,5 +1,5 @@
 // useResizable.ts
-import { type HandleDirection, type BoxState } from '../../types/resizable.type'
+import { type HandleDirection, type BoxState } from '../types/resizable.type'
 import type { AnyTouchEvent } from 'any-touch'
 import { resizing } from '../hooks/useSharedState'
 

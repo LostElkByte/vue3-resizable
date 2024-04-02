@@ -235,3 +235,4 @@ onMounted(() => {
   justify-content: center;
 }
 </style>
+./types/resizable.type
