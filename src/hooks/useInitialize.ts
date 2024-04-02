@@ -78,7 +78,13 @@ const updateBoxSizeAfterAllElementsLoad = (
   nextTick().then(() => {
     // 获取插槽DOM
     const slotElement = slotRef
-    if (!slotElement) return
+    // 如果插槽内没有元素直接更新样式并结束
+    if (!slotElement?.children[0]) {
+      updateBoxStyle()
+      return
+    }
+
+    // 获取插槽内的异步元素
     const asyncElements = slotElement.querySelectorAll('img, video, iframe')
     let elementsToLoad = asyncElements.length
 
