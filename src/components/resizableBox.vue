@@ -45,7 +45,6 @@ import {
   reactive,
   onMounted,
   onUnmounted,
-  nextTick,
 } from 'vue'
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from 'any-touch'
@@ -53,110 +52,24 @@ import AnyTouch from 'any-touch'
 import { useDraggable } from '@/hooks/useDraggable'
 import { useResizable } from '@/hooks/useResizable'
 // 导入公共类型定义
-import { type HandleDirection, type BoxState } from '@/types/resizable.type'
+import { type BoxState } from '@/types/resizable.type'
+// 导入初始化hooks
+import {
+  calculateInitialHeight,
+  calculateInitialWidth,
+  handles,
+  updateBoxSizeAfterAllElementsLoad,
+} from '@/hooks/useInitialize'
+// 导入props
+import { defaultProps, type Props } from '@/hooks/useProps'
 
-// props 接口
-interface Props {
-  /** 最小宽度限制, 应 > 0 && < maxWidth && < initialWidth */
-  minWidth?: number
-  /** 最小高度限制, 应 > 0 && < maxHeight && < initialHeight */
-  minHeight?: number
-  /** 最大宽度限制, 应 > minWidth && > initialWidth */
-  maxWidth?: number
-  /** 最大高度限制, 应 > minHeight && > initialHeight */
-  maxHeight?: number
-  /** 初始化宽度, 应 > 0 && > minWidth && < maxWidth */
-  initialWidth?: number
-  /** 初始化高度, 应 > 0 && > minHeight && < maxHeight */
-  initialHeight?: number
-  /** 初始化上偏移 */
-  initialTop?: number
-  /** 初始化左偏移 */
-  initialLeft?: number
-  /** 容器样式, 应为一个CSS对象 */
-  style?: CSSProperties
-  /** 拖拽点样式, 应为一个CSS对象 */
-  handleStyle?: CSSProperties
-  /** 宽高单位, 可以是 'px' | 'rem' */
-  cssUnit?: 'px' | 'rem'
-  /** 显示尺寸信息, 默认是false */
-  showDimension?: boolean
-  /** 显示位置信息, 默认是false */
-  showPosition?: boolean
-}
-
-// 定义组件接收的props
-const props = withDefaults(defineProps<Props>(), {
-  minWidth: 30,
-  minHeight: 30,
-  initialWidth: 200,
-  initialHeight: 200,
-  initialTop: 100,
-  initialLeft: 100,
-  cssUnit: 'px',
-  showDimension: false,
-  showPosition: false,
-})
-
-/**
- * 宽度与高度的边界控制警告
- */
-const boundaryWarning = (widthOrHeight: 'Width' | 'Height') => {
-  // 最小宽/高、最大宽/高、初始化宽/高需要大于0
-  if (
-    props[`min${widthOrHeight}`] <= 0 ||
-    props[`initial${widthOrHeight}`] <= 0 ||
-    (props[`max${widthOrHeight}`] && props[`max${widthOrHeight}`]! <= 0)
-  ) {
-    console.error(
-      'The minimum width/height, maximum width/height, and initial width/height must be greater than 0'
-    )
-  }
-  // 最小高/宽度不能大于初始化高/宽度
-  if (props[`min${widthOrHeight}`] > props[`initial${widthOrHeight}`])
-    console.error(
-      `The min${widthOrHeight} cannot be greater than the initial${widthOrHeight}!`
-    )
-  // 初始化高/宽度不能大于最大高/宽度
-  if (
-    props[`max${widthOrHeight}`] &&
-    props[`initial${widthOrHeight}`] > props[`max${widthOrHeight}`]!
-  )
-    console.error('The initialHeight cannot be greater than the maxHeight!')
-  // 最小高/宽度不能大于最大高/宽度
-  if (
-    props[`max${widthOrHeight}`] &&
-    props[`min${widthOrHeight}`] > props[`max${widthOrHeight}`]!
-  )
-    console.error('The minHeight cannot be greater than the maxHeight!')
-}
-
-/**
- * 计算初始化高度
- */
-const calculateInitialHeight = () => {
-  boundaryWarning('Height')
-  return Math.min(
-    Math.max(props.initialHeight, props.minHeight),
-    props.maxHeight || Infinity
-  )
-}
-
-/**
- * 计算初始化宽度
- */
-const calculateInitialWidth = () => {
-  boundaryWarning('Width')
-  return Math.min(
-    Math.max(props.initialWidth, props.minWidth),
-    props.maxWidth || Infinity
-  )
-}
+// 定义props
+const props = withDefaults(defineProps<Props>(), defaultProps)
 
 // 盒子的尺寸和位置
 const box: BoxState = reactive({
-  width: calculateInitialWidth(),
-  height: calculateInitialHeight(),
+  width: calculateInitialWidth(props),
+  height: calculateInitialHeight(props),
   top: props.initialTop,
   left: props.initialLeft,
 })
@@ -178,18 +91,6 @@ const updateBoxStyle = () => {
   boxStyle.top = `${box.top}px`
   boxStyle.left = `${box.left}px`
 }
-
-// 手柄方向数组，用于v-for循环
-const handles: HandleDirection[] = [
-  'top-left',
-  'top',
-  'top-right',
-  'right',
-  'bottom-right',
-  'bottom',
-  'bottom-left',
-  'left',
-]
 
 // 导入处理拖拽逻辑的方法
 const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
@@ -226,72 +127,13 @@ onMounted(() => {
   endResize.value = resizableMethods.endResize
 
   // 更新盒子尺寸
-  updateBoxSizeAfterAllElementsLoad()
+  updateBoxSizeAfterAllElementsLoad(slotRef.value, box, updateBoxStyle)
 
   onUnmounted(() => {
     // 组件卸载时，销毁AnyTouch实例以清理资源
     at.value?.destroy()
   })
 })
-
-/**
- * 更新盒子尺寸以适应插槽内所有异步加载完成的内容（如图片、视频、iframe）。
- * 使用Vue的nextTick确保DOM更新完成后执行。
- * 检查插槽内所有可能需要异步加载的元素，并为它们添加onload事件监听器（对于图片和iframe）。
- * 对于视频，使用loadeddata事件。一旦所有元素加载完成，更新盒子尺寸。
- */
-const updateBoxSizeAfterAllElementsLoad = () => {
-  nextTick().then(() => {
-    // 获取插槽DOM
-    const slotElement = slotRef.value
-    if (!slotElement) return
-    const asyncElements = slotElement.querySelectorAll('img, video, iframe')
-    let elementsToLoad = asyncElements.length
-
-    // 更新盒子尺寸
-    const updateSize = () => {
-      box.width = slotElement.offsetWidth
-      box.height = slotElement.offsetHeight
-      updateBoxStyle() // 更新盒子样式的方法
-    }
-
-    // 如果没有需要异步加载的元素,直接更新尺寸
-    if (elementsToLoad === 0) {
-      updateSize()
-      return
-    }
-
-    // 循环遍历插槽内所有的异步元素
-    asyncElements.forEach((element) => {
-      // 加载事件方法
-      const onLoadOrError = () => {
-        elementsToLoad--
-        if (elementsToLoad === 0) {
-          updateSize()
-        }
-      }
-
-      if (element.tagName === 'IMG') {
-        const img = element as HTMLImageElement
-        img.onload = onLoadOrError
-        img.onerror = onLoadOrError
-        // 检查图片是否已经加载
-        if (img.complete) onLoadOrError()
-      } else if (element.tagName === 'VIDEO') {
-        const video = element as HTMLVideoElement
-        // 检查视频是否已经加载足够的数据
-        if (video.readyState > 0) {
-          onLoadOrError()
-        } else {
-          video.addEventListener('loadeddata', onLoadOrError, { once: true })
-        }
-      } else if (element.tagName === 'IFRAME') {
-        const iframe = element as HTMLIFrameElement
-        iframe.onload = onLoadOrError
-      }
-    })
-  })
-}
 </script>
 
 <style lang="scss">

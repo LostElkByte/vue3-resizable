@@ -12,6 +12,7 @@ import { resizing } from '@/hooks/useSharedState'
  * @param {BoxState} box - 盒子的当前状态，包括高度和顶部位置
  * @param {number} minHeight - 盒子的最小高度限制
  * @param {number | undefined} maxHeight - 最大高度
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustHeightAndTop(
   deltaY: number,
@@ -76,6 +77,7 @@ function adjustHeightAndTop(
  * @param {BoxState} box - 盒子的当前状态，包括宽度和左侧位置
  * @param {number} minWidth - 盒子的最小宽度限制
  * @param {number | undefined} maxWidth - 最大高度
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustWidthAndLeft(
   deltaX: number,
@@ -131,6 +133,7 @@ function adjustWidthAndLeft(
  * @param {number} deltaX - 水平方向上的位移量. 正值表示增加宽度，负值表示减少宽度
  * @param {number} minWidth - 盒子允许的最小宽度
  * @param {number | undefined} maxWidth - 盒子允许的最大宽度. 如果未定义，则不限制最大宽度
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustWidth(
   box: BoxState,
@@ -168,6 +171,7 @@ function adjustWidth(
  * @param {number} deltaY - 垂直方向上的位移量. 正值表示增加高度，负值表示减少高度
  * @param {number} minHeight - 盒子允许的最小高度
  * @param {number | undefined} maxHeight - 盒子允许的最大高度.如果未定义，则不限制最大高度
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustHeight(
   box: BoxState,
@@ -207,6 +211,7 @@ function adjustHeight(
  * @param {number} minHeight - 最小高度
  * @param {number | undefined} maxWidth - 最大宽度
  * @param {number | undefined} maxHeight - 最大高度
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustSize(
   direction: HandleDirection,
@@ -269,6 +274,7 @@ function adjustSize(
  * @param {number | undefined} maxHeight - 最大高度限制
  * @param {Function} updateBoxStyle - 一个回调函数，用于在盒子尺寸或位置变化后更新其样式
  * @returns {Object} 包含`onResize`、`startResize`和`endResize`三个方法的对象，用于处理拖拽开始、进行中和结束时的逻辑
+ * @param {number | undefined} slotRef - 插槽容器DOM
  */
 export function useResizable(
   box: BoxState,
