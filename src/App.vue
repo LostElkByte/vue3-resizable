@@ -11,7 +11,18 @@ import ResizableBox from '@/components/resizableBox.vue'
     :showDimension="true"
     :showPosition="true"
   >
-    <div>
+    <!-- <div style="width: 300px; height: 300px;">
+      <span>lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk</span>
+      <img
+        width="100px"
+        height="100px"
+        src="https://api.lostelk.cn/files/808/serve?size=large"
+        alt=""
+        srcset=""
+      />
+    </div> -->
+
+    <!-- <div style="width: 300px; height: 300px;">
       <img
         width="50%"
         height="100%"
@@ -26,7 +37,14 @@ import ResizableBox from '@/components/resizableBox.vue'
         alt=""
         srcset=""
       />
-    </div>
+    </div> -->
+
+    <!-- <img
+      src="https://api.lostelk.cn/files/808/serve?size=large"
+      alt=""
+    /> -->
+
+    <!-- <span>lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk</span> -->
   </ResizableBox>
 </template>
 
