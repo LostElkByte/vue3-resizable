@@ -8,11 +8,18 @@ import ResizableBox from '@/components/resizableBox.vue'
     :initialHeight="200"
     :minWidth="100"
     :minHeight="100"
-    :maxWidth="300"
-    :maxHeight="300"
-    :showDimension="false"
+    :maxWidth="500"
+    :maxHeight="500"
+    :showDimension="true"
     :showPosition="true"
-  ></ResizableBox>
+  >
+    <img
+      style="width: 600px; height: 600px"
+      src="https://api.lostelk.cn/files/808/serve?size=large"
+      alt=""
+      srcset=""
+    />
+  </ResizableBox>
 </template>
 
 <style scoped></style>

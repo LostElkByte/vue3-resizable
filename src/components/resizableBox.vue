@@ -9,7 +9,10 @@
     @panend="endDrag()"
   >
     <!-- 插槽：用于插入自定义内容 -->
-    <div class="content-slot">
+    <div
+      class="content-slot"
+      ref="slotRef"
+    >
       <slot></slot>
     </div>
     <!-- 循环生成可拖拽的手柄，用于调整盒子大小 -->
@@ -36,7 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
+import {
+  type CSSProperties,
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  nextTick,
+} from 'vue'
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from 'any-touch'
 // 导入自定义钩子：用于实现拖拽和调整大小功能
@@ -77,8 +87,8 @@ interface Props {
 
 // 定义组件接收的props
 const props = withDefaults(defineProps<Props>(), {
-  minWidth: 50,
-  minHeight: 50,
+  minWidth: 30,
+  minHeight: 30,
   initialWidth: 200,
   initialHeight: 200,
   initialTop: 100,
@@ -184,32 +194,104 @@ const handles: HandleDirection[] = [
 // 导入处理拖拽逻辑的方法
 const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
 
-// 导入处理调整大小的方法
-const { startResize, onResize, endResize } = useResizable(
-  box,
-  props.minWidth,
-  props.minHeight,
-  props.maxWidth,
-  props.maxHeight,
-  updateBoxStyle
-)
+// 响应式引用来存储调整大小函数返回的方法
+const startResize = ref<Function>(() => {})
+const onResize = ref<Function>(() => {})
+const endResize = ref<Function>(() => {})
 
-// 初始化AnyTouch实例以处理触摸事件
-const at = ref<null | AnyTouch>(null)
+// 获取插槽容器的DOM
+const slotRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  // 组件挂载时更新盒子样式
-  updateBoxStyle()
-
+  // 初始化AnyTouch实例以处理触摸事件
+  const at = ref<null | AnyTouch>(null)
   // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素
   const el = document.getElementById('resizable-box') as HTMLElement
   at.value = new AnyTouch(el)
+
+  // 导入处理调整大小的方法
+  const resizableMethods = useResizable(
+    box,
+    props.minWidth,
+    props.minHeight,
+    props.maxWidth,
+    props.maxHeight,
+    updateBoxStyle,
+    slotRef.value
+  )
+
+  // 将调整大小的相应方法赋值给响应式对象,供模板使用
+  startResize.value = resizableMethods.startResize
+  onResize.value = resizableMethods.onResize
+  endResize.value = resizableMethods.endResize
+
+  // 更新盒子尺寸
+  updateBoxSizeAfterAllElementsLoad()
+
+  onUnmounted(() => {
+    // 组件卸载时，销毁AnyTouch实例以清理资源
+    at.value?.destroy()
+  })
 })
 
-onUnmounted(() => {
-  // 组件卸载时，销毁AnyTouch实例以清理资源
-  at.value?.destroy()
-})
+/**
+ * 更新盒子尺寸以适应插槽内所有异步加载完成的内容（如图片、视频、iframe）。
+ * 使用Vue的nextTick确保DOM更新完成后执行。
+ * 检查插槽内所有可能需要异步加载的元素，并为它们添加onload事件监听器（对于图片和iframe）。
+ * 对于视频，使用loadeddata事件。一旦所有元素加载完成，更新盒子尺寸。
+ */
+const updateBoxSizeAfterAllElementsLoad = () => {
+  nextTick().then(() => {
+    // 获取插槽DOM
+    const slotElement = slotRef.value
+    if (!slotElement) return
+    const asyncElements = slotElement.querySelectorAll('img, video, iframe')
+    let elementsToLoad = asyncElements.length
+
+    // 更新盒子尺寸
+    const updateSize = () => {
+      box.width = slotElement.offsetWidth
+      box.height = slotElement.offsetHeight
+      updateBoxStyle() // 更新盒子样式的方法
+    }
+
+    // 如果没有需要异步加载的元素,直接更新尺寸
+    if (elementsToLoad === 0) {
+      updateSize()
+      return
+    }
+
+    // 循环遍历插槽内所有的异步元素
+    asyncElements.forEach((element) => {
+      // 加载事件方法
+      const onLoadOrError = () => {
+        elementsToLoad--
+        if (elementsToLoad === 0) {
+          updateSize()
+        }
+      }
+
+      if (element.tagName === 'IMG') {
+        const img = element as HTMLImageElement
+        img.onload = onLoadOrError
+        img.onerror = onLoadOrError
+        // 检查图片是否已经加载
+        if (img.complete) onLoadOrError()
+      } else if (element.tagName === 'VIDEO') {
+        const video = element as HTMLVideoElement
+        // 检查视频是否已经加载足够的数据
+        if (video.readyState > 0) {
+          onLoadOrError()
+        } else {
+          video.addEventListener('loadeddata', onLoadOrError, { once: true })
+        }
+      } else if (element.tagName === 'IFRAME') {
+        const iframe = element as HTMLIFrameElement
+        iframe.onload = onLoadOrError
+      }
+    })
+  })
+}
 </script>
 
 <style lang="scss">
@@ -222,7 +304,9 @@ onUnmounted(() => {
   cursor: move;
   user-select: none;
   border: 1px solid #4af;
-  background-color: #ffffff13;
+  background-color: #ffffff06;
+  box-sizing: content-box;
+  z-index: 99999;
 }
 
 /* 调整手柄样式: 用于拖拽改变盒子大小 */
@@ -304,8 +388,6 @@ onUnmounted(() => {
 
 /* 插槽容器样式: 用于自定义内容的布局 */
 .content-slot {
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

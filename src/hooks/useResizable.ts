@@ -17,14 +17,22 @@ function adjustHeightAndTop(
   deltaY: number,
   box: BoxState,
   minHeight: number,
-  maxHeight: number | undefined
+  maxHeight: number | undefined,
+  slotRef: HTMLElement | null
 ) {
   // 即将要调整到的高度
   const newHeight = box.height - deltaY
 
   // 如果即将要调整到的高度大于等于最小高度 或 小于等于最大高度，正常调整高度并更新顶部位置
   if (newHeight >= minHeight && newHeight <= (maxHeight || Infinity)) {
-    box.height -= deltaY
+    box.height = newHeight
+
+    // 如果插槽内容存在,更新插槽内容的宽度
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.height = `${newHeight}px`
+    }
+
     box.top += deltaY
     return
   }
@@ -33,6 +41,13 @@ function adjustHeightAndTop(
   if (maxHeight && newHeight > maxHeight) {
     const heightDiff = maxHeight - box.height
     box.height = maxHeight
+
+    // 如果插槽内容存在,更新插槽内容的宽度
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.height = `${maxHeight}px`
+    }
+
     box.top -= heightDiff
     return
   }
@@ -41,6 +56,13 @@ function adjustHeightAndTop(
   if (newHeight < minHeight) {
     const heightDiff = box.height - minHeight
     box.height = minHeight
+
+    // 如果插槽内容存在,更新插槽内容的宽度
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.height = `${minHeight}px`
+    }
+
     box.top += heightDiff
   }
 }
@@ -59,13 +81,19 @@ function adjustWidthAndLeft(
   deltaX: number,
   box: BoxState,
   minWidth: number,
-  maxWidth: number | undefined
+  maxWidth: number | undefined,
+  slotRef: HTMLElement | null
 ) {
   // 即将要调整到的宽度
   const newWidth = box.width - deltaX
   // 如果即将要调整到的宽度大于等于最小宽度 或 小于等于最大宽度，正常调整宽度并更新左侧位置
   if (newWidth >= minWidth && newWidth <= (maxWidth || Infinity)) {
-    box.width -= deltaX
+    box.width = newWidth
+    // 如果插槽内容存在,更新插槽内容的宽度
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.width = `${newWidth}px`
+    }
     box.left += deltaX
     return
   }
@@ -74,6 +102,11 @@ function adjustWidthAndLeft(
   if (maxWidth && newWidth > maxWidth) {
     const widthDiff = maxWidth - box.width
     box.width = maxWidth
+    // 如果插槽内容存在,更新插槽内容的宽度
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.width = `${maxWidth}px`
+    }
     box.left -= widthDiff
     return
   }
@@ -82,6 +115,10 @@ function adjustWidthAndLeft(
   if (newWidth < minWidth) {
     const widthDiff = box.width - minWidth
     box.width = minWidth
+    if (slotRef) {
+      const child = slotRef.children[0] as HTMLElement
+      child.style.width = `${minWidth}px`
+    }
     box.left += widthDiff
   }
 }
@@ -99,7 +136,8 @@ function adjustWidth(
   box: BoxState,
   deltaX: number,
   minWidth: number,
-  maxWidth: number | undefined
+  maxWidth: number | undefined,
+  slotRef: HTMLElement | null
 ) {
   // 即将要调整的宽度
   let newWidth = box.width + deltaX
@@ -112,7 +150,14 @@ function adjustWidth(
     newWidth = Math.min(newWidth, maxWidth)
   }
 
+  // 更新盒子宽度
   box.width = newWidth
+
+  // 如果插槽内容存在,更新插槽内容的宽度
+  if (slotRef) {
+    const child = slotRef.children[0] as HTMLElement
+    child.style.width = `${newWidth}px`
+  }
 }
 
 /**
@@ -128,7 +173,8 @@ function adjustHeight(
   box: BoxState,
   deltaY: number,
   minHeight: number,
-  maxHeight: number | undefined
+  maxHeight: number | undefined,
+  slotRef: HTMLElement | null
 ) {
   // 即将要调整到的高度
   let newHeight = box.height + deltaY
@@ -141,7 +187,14 @@ function adjustHeight(
     newHeight = Math.min(newHeight, maxHeight)
   }
 
+  // 更新盒子高度
   box.height = newHeight
+
+  // 如果插槽内容存在,更新插槽内容的宽度
+  if (slotRef) {
+    const child = slotRef.children[0] as HTMLElement
+    child.style.height = `${newHeight}px`
+  }
 }
 
 /**
@@ -163,45 +216,46 @@ function adjustSize(
   minWidth: number,
   minHeight: number,
   maxWidth: number | undefined,
-  maxHeight: number | undefined
+  maxHeight: number | undefined,
+  slotRef: HTMLElement | null
 ) {
   // 根据不同的方向调整盒子的尺寸，并确保不小于最小尺寸
   switch (direction) {
     // 处理上方向调整大小
     case 'top':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight)
+      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
       break
     // 处理下方向调整大小
     case 'bottom':
-      adjustHeight(box, deltaY, minHeight, maxHeight)
+      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
       break
     // 处理右方向调整大小
     case 'right':
-      adjustWidth(box, deltaX, minWidth, maxWidth)
+      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
       break
     // 处理左方向调整大小
     case 'left':
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth)
+      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
       break
     // 处理右上角方向调整大小
     case 'top-right':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight)
-      adjustWidth(box, deltaX, minWidth, maxWidth)
+      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
+      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
       break
     // 处理左上角方向调整大小
     case 'top-left':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight)
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth)
+      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
+      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
       break
     // 处理右下角方向调整大小
     case 'bottom-right':
-      adjustHeight(box, deltaY, minHeight, maxHeight)
-      adjustWidth(box, deltaX, minWidth, maxWidth)
+      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
+      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
       break
     // 处理左下角方向调整大小
     case 'bottom-left':
-      adjustHeight(box, deltaY, minHeight, maxHeight)
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth)
+      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
+      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
       break
   }
 }
@@ -222,7 +276,8 @@ export function useResizable(
   minHeight: number,
   maxWidth: number | undefined,
   maxHeight: number | undefined,
-  updateBoxStyle: () => void
+  updateBoxStyle: () => void,
+  slotRef: HTMLElement | null
 ) {
   // 用于跟踪requestAnimationFrame的ID，以便在需要时取消排队的帧
   let frame: number | null = null
@@ -250,7 +305,8 @@ export function useResizable(
         minWidth,
         minHeight,
         maxWidth,
-        maxHeight
+        maxHeight,
+        slotRef
       )
       // 更新盒子样式
       updateBoxStyle()
