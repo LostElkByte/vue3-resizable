@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import ResizableBox from '../package/ElkResize.vue'
+import ResizableBox from '../dist/elk-resize.js'
+import '../dist/style.css'
 </script>
 
 <template>

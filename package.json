@@ -3,6 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/elk-resize.umd.cjs",
+  "module": "./dist/elk-resize.js",
+  "exports": {
+    ".": {
+      "import": "./dist/elk-resize.js",
+      "require": "./dist/elk-resize.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",

@@ -28,24 +28,20 @@
     ></div>
     <!-- 实时尺寸/位置信息显示面板 -->
     <div
-      v-if="showDimension || showPosition"
+      v-if="props.showDimension || props.showPosition"
       class="dimension"
     >
-      <span v-if="showDimension">Size: {{ box.width }} × {{ box.height }}</span>
-      <span v-if="showPosition">Top: {{ box.top }}</span>
-      <span v-if="showPosition">Left: {{ box.left }}</span>
+      <span v-if="props.showDimension">
+        Size: {{ box.width }} × {{ box.height }}
+      </span>
+      <span v-if="props.showPosition">Top: {{ box.top }}</span>
+      <span v-if="props.showPosition">Left: {{ box.left }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  type CSSProperties,
-  ref,
-  reactive,
-  onMounted,
-  onUnmounted,
-} from 'vue'
+import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from 'any-touch'
 // 导入自定义钩子：用于实现拖拽和调整大小功能
@@ -235,4 +231,3 @@ onMounted(() => {
   justify-content: center;
 }
 </style>
-./types/resizable.type
