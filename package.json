@@ -1,14 +1,18 @@
 {
   "name": "vue3-resizable",
   "version": "0.0.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "package.json",
+    "README.md"
   ],
   "main": "./dist/elk-resize.umd.cjs",
   "module": "./dist/elk-resize.js",
   "exports": {
+    "./dist/style.css": "./dist/style.css",
+    "./css": "./dist/style.css",
     ".": {
       "import": "./dist/elk-resize.js",
       "require": "./dist/elk-resize.umd.cjs"

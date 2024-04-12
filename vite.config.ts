@@ -2,11 +2,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import VueDevTools from 'vite-plugin-vue-devtools'
 import dts from 'vite-plugin-dts'
 // @ts-ignore
-// import eslint from 'vite-plugin-eslint'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,9 +13,10 @@ export default defineConfig({
     },
   },
   build: {
+    emptyOutDir: false, // 默认情况下，若 outDir 在 root 目录下，则 Vite 会在构建时清空该目录。若 outDir 在根目录之外则会抛出一个警告避免意外删除掉重要的文件。
     lib: {
-      entry: resolve(__dirname, 'package/index.ts'),
-      name: 'elkResize',
+      entry: resolve(__dirname, 'package', 'index.ts'),
+      name: 'ElkResize',
       // the proper extensions will be added
       fileName: 'elk-resize',
     },
@@ -33,5 +31,8 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue(), vueJsx(), VueDevTools(), dts({ include: ['./package'] })],
+  plugins: [
+    vue(),
+    dts({ tsconfigPath: 'tsconfig.app.json', include: ['./package'] }),
+  ],
 })
