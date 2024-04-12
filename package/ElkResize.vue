@@ -141,10 +141,10 @@ onMounted(() => {
   align-items: center;
   cursor: move;
   user-select: none;
-  border: 1px solid #4af;
+  outline: 1px solid #4af;
   background-color: #ffffff06;
   box-sizing: content-box;
-  z-index: 99999;
+  z-index: 999999;
 }
 
 /* 调整手柄样式: 用于拖拽改变盒子大小 */
@@ -155,7 +155,7 @@ onMounted(() => {
   background-color: #4af;
   border-radius: 50%;
   border: 1px solid #fff;
-  z-index: 10; /* 确保手柄在盒子之上 */
+  z-index: 999999; /* 确保手柄在盒子之上 */
 
   /* 手柄位置样式: 根据手柄的具体位置调整 */
   &-top-left {

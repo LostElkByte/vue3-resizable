@@ -5,47 +5,38 @@ import '../dist/style.css'
 
 <template>
   <ResizableBox
-    :initialWidth="200"
-    :initialHeight="200"
-    :minWidth="100"
-    :minHeight="100"
+    :initialWidth="500"
+    :initialHeight="500"
+    :minWidth="300"
+    :minHeight="300"
     :showDimension="true"
     :showPosition="true"
   >
-    <div>
-      <span>lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk</span>
+    <div
+      style="display: flex; flex-direction: column; width: 600px; height: 600px"
+    >
+      <h2>Harbin - Harbin</h2>
+      <p>
+        Central Street is a famous pedestrian street located in Harbin, China.
+        It was built in 1900 and was originally named "China Street" with a
+        total length of about 1,400 meters. It is one of the most historical and
+        cultural commercial streets in Harbin and the longest pedestrian street
+        in Asia. Central Street is famous for its unique European architectural
+        style.
+      </p>
       <img
-        width="100px"
-        height="100px"
+        style="
+          flex: 1;
+          max-width: 500px;
+          max-height: 500px;
+          width: 100%;
+          height: 100%;
+        "
         src="https://api.lostelk.cn/files/808/serve?size=large"
         alt=""
         srcset=""
       />
     </div>
-
-    <!-- <div style="width: 300px; height: 300px;">
-      <img
-        width="50%"
-        height="100%"
-        src="https://api.lostelk.cn/files/808/serve?size=large"
-        alt=""
-        srcset=""
-      />
-      <img
-        width="50%"
-        height="100%"
-        src="https://api.lostelk.cn/files/808/serve?size=large"
-        alt=""
-        srcset=""
-      />
-    </div> -->
-
-    <!-- <img
-      src="https://api.lostelk.cn/files/808/serve?size=large"
-      alt=""
-    /> -->
-
-    <!-- <span>lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk   lostElk</span> -->
   </ResizableBox>
 </template>
 
