@@ -46,6 +46,8 @@
     "component",
     "调整大小"
   ],
+  "homepage": "https://github.com/LostElkByte/vue3-resizable",
+  "bugs": "https://github.com/LostElkByte/vue3-resizable/issues",
   "license": "MIT",
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
