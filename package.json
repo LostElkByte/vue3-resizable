@@ -1,22 +1,30 @@
 {
   "name": "vue3-resizable",
-  "version": "0.0.0",
+  "version": "0.0.0-alpha.1",
+  "description": "Vue3 is used for components with resizable and draggable elements.",
   "private": false,
   "type": "module",
+  "main": "./dist/elk-resize.umd.cjs",
+  "module": "./dist/elk-resize.js",
+  "unpkg": "./dist/elk-resize.umd.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/elk-resize.js",
+      "require": "./dist/elk-resize.umd.cjs"
+    },
+    "./style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
   "files": [
     "dist",
     "package.json",
     "README.md"
   ],
-  "main": "./dist/elk-resize.umd.cjs",
-  "module": "./dist/elk-resize.js",
-  "exports": {
-    "./dist/style.css": "./dist/style.css",
-    "./css": "./dist/style.css",
-    ".": {
-      "import": "./dist/elk-resize.js",
-      "require": "./dist/elk-resize.umd.cjs"
-    }
+  "author": {
+    "name": "LostElk",
+    "email": "lostelk.email@gmail.com"
   },
   "scripts": {
     "dev": "vite",
@@ -30,6 +38,15 @@
     "any-touch": "^2.2.0",
     "vue": "^3.4.21"
   },
+  "keywords": [
+    "vue",
+    "vue3",
+    "resize",
+    "resizable",
+    "component",
+    "调整大小"
+  ],
+  "license": "MIT",
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
     "@tsconfig/node20": "^20.1.2",
