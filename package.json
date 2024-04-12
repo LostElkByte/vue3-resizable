@@ -1,6 +1,6 @@
 {
   "name": "vue3-resizable",
-  "version": "0.0.0-alpha.1",
+  "version": "0.0.0-alpha.2",
   "description": "Vue3 is used for components with resizable and draggable elements.",
   "private": false,
   "type": "module",
@@ -9,12 +9,21 @@
   "unpkg": "./dist/elk-resize.umd.cjs",
   "exports": {
     ".": {
+      "types": "./dist/elk-resize.d.ts",
       "import": "./dist/elk-resize.js",
       "require": "./dist/elk-resize.umd.cjs"
     },
     "./style.css": {
       "import": "./dist/style.css",
       "require": "./dist/style.css"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/elk-resize.d.ts"
+      ]
     }
   },
   "files": [
