@@ -1,7 +1,7 @@
 <template>
   <!-- 可调整大小的盒子，支持通过拖拽边缘或角落来改变尺寸 -->
   <div
-    id="resizable-box"
+    ref="resizableBoxRef"
     class="resizable-box"
     :style="[boxStyle, style]"
     @pan="onDragging($event)"
@@ -31,9 +31,7 @@
       v-if="props.showDimension || props.showPosition"
       class="dimension"
     >
-      <span v-if="props.showDimension">
-        Size: {{ box.width }} × {{ box.height }}
-      </span>
+      <span v-if="props.showDimension"> Size: {{ box.width }} × {{ box.height }} </span>
       <span v-if="props.showPosition">Top: {{ box.top }}</span>
       <span v-if="props.showPosition">Left: {{ box.left }}</span>
     </div>
@@ -50,12 +48,7 @@ import { useResizable } from './hooks/useResizable'
 // 导入公共类型定义
 import { type BoxState } from './types/resizable.type'
 // 导入初始化hooks
-import {
-  calculateInitialHeight,
-  calculateInitialWidth,
-  handles,
-  updateBoxSizeAfterAllElementsLoad,
-} from './hooks/useInitialize'
+import { calculateInitialHeight, calculateInitialWidth, handles, updateBoxSizeAfterAllElementsLoad } from './hooks/useInitialize'
 // 导入props
 import { defaultProps, type Props } from './hooks/useProps'
 
@@ -99,12 +92,13 @@ const endResize = ref<Function>(() => {})
 // 获取插槽容器的DOM
 const slotRef = ref<HTMLElement | null>(null)
 
+// 获取最外层的容器的DOM
+const resizableBoxRef = ref<HTMLElement | null>(null)
 onMounted(() => {
   // 初始化AnyTouch实例以处理触摸事件
   const at = ref<null | AnyTouch>(null)
-  // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素
-  const el = document.getElementById('resizable-box') as HTMLElement
-  at.value = new AnyTouch(el)
+  // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素t
+  at.value = new AnyTouch(resizableBoxRef.value!)
 
   // 导入处理调整大小的方法
   const resizableMethods = useResizable(
