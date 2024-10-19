@@ -67,6 +67,7 @@ import {
   handles,
   updateBoxSizeAfterAllElementsLoad,
 } from "./hooks/useInitialize"
+
 // 导入props
 import { defaultProps, type Props, type ComputedProps } from "./hooks/useProps"
 
@@ -158,9 +159,6 @@ watchEffect(() => {
   boxStyle.zIndex = box.zIndex
 })
 
-// 控制手柄显示的状态
-const showHandles = ref(false)
-
 /**
  * 更新盒子样式
  */
@@ -174,6 +172,9 @@ const updateBoxStyle = () => {
 
 // 导入处理拖拽逻辑的方法
 const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
+
+// 控制手柄显示的状态
+const showHandles = ref(false)
 
 // 响应式引用来存储调整大小函数返回的方法
 const startResize = ref<Function>(() => {})
@@ -191,6 +192,18 @@ const at = ref<null | AnyTouch>(null)
 
 // 插槽的第一个子元素
 const child = ref<HTMLElement | null>(null)
+
+const handleClick = (event: MouseEvent) => {
+  /**
+   * 监听点击事件，如果点击外部，则隐藏手柄
+   *
+   * @param event MouseEvent - 鼠标事件对象
+   */
+  const target = event.target as Node
+  if (resizableBoxRef.value && !resizableBoxRef.value.contains(target)) {
+    showHandles.value = false
+  }
+}
 
 onMounted(() => {
   // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素t
@@ -225,6 +238,8 @@ onMounted(() => {
     child.value.style.width = `${box.width}${computedProps.value.cssUnit}`
     child.value.style.height = `${box.height}${computedProps.value.cssUnit}`
   }
+
+  window.addEventListener("click", handleClick)
 })
 
 // 监听 box.width 和 box.height 更新插槽子元素的宽度和高度
@@ -241,15 +256,8 @@ watch(
 onUnmounted(() => {
   // 组件卸载时，销毁AnyTouch实例以清理资源
   at.value?.destroy()
-})
-
-// 监听点击事件，如果点击外部，则隐藏手柄
-window.addEventListener("click", (event) => {
-  // 使用类型断言将 event.target 转换为 Node
-  const target = event.target as Node
-  if (resizableBoxRef.value && !resizableBoxRef.value.contains(target)) {
-    showHandles.value = false
-  }
+  // 清理事件监听
+  window.removeEventListener("click", handleClick)
 })
 
 defineExpose({
@@ -270,7 +278,6 @@ defineExpose({
   justify-content: center;
   align-items: center;
   cursor: move;
-  z-index: 999999;
 }
 
 .resizable-box__hover {
