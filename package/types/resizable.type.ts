@@ -15,4 +15,5 @@ export interface BoxState {
   height: number
   top: number
   left: number
+  zIndex: number
 }

@@ -15,6 +15,8 @@ export function useDraggable(box: BoxState, updateBoxStyle: () => void) {
 
   // 拖拽开始
   const startDrag = () => {
+    // 设置盒子层级为最大
+    box.zIndex = 10000000
     // 设置拖拽状态为true
     dragging.value = true
   }
@@ -40,6 +42,8 @@ export function useDraggable(box: BoxState, updateBoxStyle: () => void) {
 
   // 拖拽结束
   const endDrag = () => {
+    // 设置盒子层级为默认
+    box.zIndex = 9999999
     // 重置调整大小的状态
     dragging.value = false
     // 取消排队的帧，以防止额外的回调执行

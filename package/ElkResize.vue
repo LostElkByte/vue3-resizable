@@ -74,8 +74,8 @@ import { defaultProps, type Props, type ComputedProps } from "./hooks/useProps"
 const props = withDefaults(defineProps<Props>(), defaultProps)
 
 const computedProps = computed<ComputedProps>(() => ({
-  minWidth: props.minWidth ?? Infinity,
-  minHeight: props.minHeight ?? Infinity,
+  minWidth: props.minWidth ?? 30,
+  minHeight: props.minHeight ?? 30,
   maxWidth: props.maxWidth ?? Infinity,
   maxHeight: props.maxHeight ?? Infinity,
   initialWidth: props.initialWidth ?? 0,
@@ -98,6 +98,7 @@ const box = reactive<BoxState>({
   height: calculateInitialHeight(computedProps),
   top: computedProps.value.initialTop!,
   left: computedProps.value.initialLeft!,
+  zIndex: 9999999,
 })
 
 // 监听 box.width
@@ -146,6 +147,7 @@ const boxStyle = reactive<CSSProperties>({
   height: `${box.height}${computedProps.value.cssUnit}`,
   top: `${box.top}px`,
   left: `${box.left}px`,
+  zIndex: box.zIndex,
 })
 
 watchEffect(() => {
@@ -153,6 +155,7 @@ watchEffect(() => {
   boxStyle.height = `${box.height}${computedProps.value.cssUnit}`
   boxStyle.top = `${box.top}px`
   boxStyle.left = `${box.left}px`
+  boxStyle.zIndex = box.zIndex
 })
 
 // 控制手柄显示的状态
