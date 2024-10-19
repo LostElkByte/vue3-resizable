@@ -21,6 +21,7 @@ function adjustHeightAndTop(
   box: BoxState,
   minHeight: number,
   maxHeight: number | undefined,
+  cssUnit: "px" | "rem" | string,
   slotRef: HTMLElement | null
 ) {
   // 即将要调整到的高度
@@ -33,7 +34,7 @@ function adjustHeightAndTop(
     // 如果插槽内容存在,更新插槽内容的宽度
     if (slotRef) {
       const child = slotRef.children[0] as HTMLElement
-      child.style.height = `${newHeight}px`
+      child.style.height = `${newHeight}${cssUnit}`
     }
 
     box.top += deltaY
@@ -86,6 +87,7 @@ function adjustWidthAndLeft(
   box: BoxState,
   minWidth: number,
   maxWidth: number | undefined,
+  cssUnit: "px" | "rem" | string,
   slotRef: HTMLElement | null
 ) {
   // 即将要调整到的宽度
@@ -109,7 +111,7 @@ function adjustWidthAndLeft(
     // 如果插槽内容存在,更新插槽内容的宽度
     if (slotRef) {
       const child = slotRef.children[0] as HTMLElement
-      child.style.width = `${maxWidth}px`
+      child.style.width = `${maxWidth}${cssUnit}`
     }
     box.left -= widthDiff
     return
@@ -142,6 +144,7 @@ function adjustWidth(
   deltaX: number,
   minWidth: number,
   maxWidth: number | undefined,
+  cssUnit: "px" | "rem" | string,
   slotRef: HTMLElement | null
 ) {
   // 即将要调整的宽度
@@ -161,7 +164,7 @@ function adjustWidth(
   // 如果插槽内容存在,更新插槽内容的宽度
   if (slotRef) {
     const child = slotRef.children[0] as HTMLElement
-    child.style.width = `${newWidth}px`
+    child.style.width = `${newWidth}${cssUnit}`
   }
 }
 
@@ -180,6 +183,7 @@ function adjustHeight(
   deltaY: number,
   minHeight: number,
   maxHeight: number | undefined,
+  cssUnit: "px" | "rem" | string,
   slotRef: HTMLElement | null
 ) {
   // 即将要调整到的高度
@@ -199,7 +203,7 @@ function adjustHeight(
   // 如果插槽内容存在,更新插槽内容的宽度
   if (slotRef) {
     const child = slotRef.children[0] as HTMLElement
-    child.style.height = `${newHeight}px`
+    child.style.height = `${newHeight}${cssUnit}`
   }
 }
 
@@ -229,6 +233,7 @@ function adjustSize(
         box,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -239,6 +244,7 @@ function adjustSize(
         deltaY,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -249,6 +255,7 @@ function adjustSize(
         deltaX,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -259,6 +266,7 @@ function adjustSize(
         box,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -269,6 +277,7 @@ function adjustSize(
         box,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       adjustWidth(
@@ -276,6 +285,7 @@ function adjustSize(
         deltaX,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -286,6 +296,7 @@ function adjustSize(
         box,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       adjustWidthAndLeft(
@@ -293,6 +304,7 @@ function adjustSize(
         box,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -303,6 +315,7 @@ function adjustSize(
         deltaY,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       adjustWidth(
@@ -310,6 +323,7 @@ function adjustSize(
         deltaX,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break
@@ -320,6 +334,7 @@ function adjustSize(
         deltaY,
         computedProps.value.minHeight!,
         computedProps.value.maxHeight,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       adjustWidthAndLeft(
@@ -327,6 +342,7 @@ function adjustSize(
         box,
         computedProps.value.minWidth!,
         computedProps.value.maxWidth,
+        computedProps.value.cssUnit ?? "px",
         slotRef
       )
       break

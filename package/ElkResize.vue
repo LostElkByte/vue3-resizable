@@ -100,16 +100,44 @@ const box = reactive<BoxState>({
   left: computedProps.value.initialLeft!,
 })
 
-// 监听 computedProps 的变化
+// 监听 box.width
 watch(
-  computedProps,
+  () => [
+    computedProps.value.initialWidth,
+    computedProps.value.minWidth,
+    computedProps.value.maxWidth,
+  ],
   () => {
     box.width = calculateInitialWidth(computedProps)
+  }
+)
+
+// 监听 box.height
+watch(
+  () => [
+    computedProps.value.initialHeight,
+    computedProps.value.minHeight,
+    computedProps.value.maxHeight,
+  ],
+  () => {
     box.height = calculateInitialHeight(computedProps)
-    box.top = computedProps.value.initialTop!
-    box.left = computedProps.value.initialLeft!
-  },
-  { deep: true }
+  }
+)
+
+// 监听 box.top
+watch(
+  () => computedProps.value.initialTop,
+  (newValue) => {
+    box.top = newValue!
+  }
+)
+
+// 监听 box.left
+watch(
+  () => computedProps.value.initialLeft,
+  (newValue) => {
+    box.left = newValue!
+  }
 )
 
 // 盒子样式的响应式对象
@@ -154,9 +182,14 @@ const slotRef = ref<HTMLElement | null>(null)
 
 // 获取最外层的容器的DOM
 const resizableBoxRef = ref<HTMLElement | null>(null)
+
+// 初始化AnyTouch实例以处理触摸事件
+const at = ref<null | AnyTouch>(null)
+
+// 插槽的第一个子元素
+const child = ref<HTMLElement | null>(null)
+
 onMounted(() => {
-  // 初始化AnyTouch实例以处理触摸事件
-  const at = ref<null | AnyTouch>(null)
   // 组件挂载时，创建AnyTouch实例并应用于resizable-box元素t
   at.value = new AnyTouch(resizableBoxRef.value!)
 
@@ -176,10 +209,30 @@ onMounted(() => {
   // 更新盒子尺寸
   updateBoxSizeAfterAllElementsLoad(slotRef.value, box, updateBoxStyle)
 
-  onUnmounted(() => {
-    // 组件卸载时，销毁AnyTouch实例以清理资源
-    at.value?.destroy()
-  })
+  // 获取插槽的第一个子元素
+  child.value = slotRef.value?.children[0] as HTMLElement
+
+  // 更新插槽子元素的宽度和高度
+  if (child.value) {
+    child.value.style.width = `${box.width}${computedProps.value.cssUnit}`
+    child.value.style.height = `${box.height}${computedProps.value.cssUnit}`
+  }
+})
+
+// 监听 box.width 和 box.height 更新插槽子元素的宽度和高度
+watch(
+  () => [box.width, box.height],
+  () => {
+    if (child.value) {
+      child.value.style.width = `${box.width}${computedProps.value.cssUnit}`
+      child.value.style.height = `${box.height}${computedProps.value.cssUnit}`
+    }
+  }
+)
+
+onUnmounted(() => {
+  // 组件卸载时，销毁AnyTouch实例以清理资源
+  at.value?.destroy()
 })
 
 // 监听点击事件，如果点击外部，则隐藏手柄
