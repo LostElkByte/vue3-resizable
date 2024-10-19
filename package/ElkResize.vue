@@ -67,6 +67,8 @@ import {
   handles,
   updateBoxSizeAfterAllElementsLoad,
 } from "./hooks/useInitialize"
+// 导入共享状态
+import { resizing } from "./hooks/useSharedState"
 
 // 导入props
 import { defaultProps, type Props, type ComputedProps } from "./hooks/useProps"
@@ -200,7 +202,11 @@ const handleClick = (event: MouseEvent) => {
    * @param event MouseEvent - 鼠标事件对象
    */
   const target = event.target as Node
-  if (resizableBoxRef.value && !resizableBoxRef.value.contains(target)) {
+  if (
+    resizableBoxRef.value &&
+    !resizableBoxRef.value.contains(target) &&
+    !resizing.value
+  ) {
     showHandles.value = false
   }
 }

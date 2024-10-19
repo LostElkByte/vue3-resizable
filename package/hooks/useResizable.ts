@@ -402,8 +402,10 @@ export function useResizable(
 
   // 调整大小结束时
   const endResize = () => {
-    // 重置调整大小的状态
-    resizing.value = false
+    // 重置调整大小的状态, 延迟300ms，防止拖拽超出时误判隐藏拖拽框
+    setTimeout(() => {
+      resizing.value = false
+    }, 300)
     if (frame !== null) {
       // 取消排队的帧，以防止额外的回调执行
       cancelAnimationFrame(frame)
