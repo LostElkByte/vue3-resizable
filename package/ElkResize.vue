@@ -2,27 +2,31 @@
   <!-- 可调整大小的盒子，支持通过拖拽边缘或角落来改变尺寸 -->
   <div
     ref="resizableBoxRef"
-    class="resizable-box"
+    :class="{ 'resizable-box': true, 'resizable-box__hover': showHandles }"
     :style="[boxStyle, style]"
     @pan="onDragging($event)"
     @panstart="startDrag()"
     @panend="endDrag()"
+    @click="showHandles = true"
   >
     <!-- 插槽：用于插入自定义内容 -->
     <div class="content-slot" ref="slotRef">
       <slot></slot>
     </div>
     <!-- 循环生成可拖拽的手柄，用于调整盒子大小 -->
-    <div
-      class="handle"
-      v-for="handle in handles"
-      :key="handle"
-      :style="handleStyle"
-      :class="`handle-${handle}`"
-      @pan="onResize($event, handle)"
-      @panstart="startResize()"
-      @panend="endResize()"
-    ></div>
+    <template v-if="showHandles">
+      <div
+        class="handle"
+        v-for="handle in handles"
+        :key="handle"
+        :style="handleStyle"
+        :class="`handle-${handle}`"
+        @pan="onResize($event, handle)"
+        @panstart="startResize()"
+        @panend="endResize()"
+      ></div>
+    </template>
+
     <!-- 实时尺寸/位置信息显示面板 -->
     <div v-if="props.showDimension || props.showPosition" class="dimension">
       <span v-if="props.showDimension">
@@ -38,6 +42,7 @@
 defineOptions({
   name: "ElkResize",
 })
+
 import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from "vue"
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from "any-touch"
@@ -59,6 +64,11 @@ import { defaultProps, type Props } from "./hooks/useProps"
 // 定义props
 const props = withDefaults(defineProps<Props>(), defaultProps)
 
+// 定义要发出的事件
+const emits = defineEmits<{
+  (e: "boxUpdated", value: BoxState): void
+}>()
+
 // 盒子的尺寸和位置
 const box: BoxState = reactive({
   width: calculateInitialWidth(props),
@@ -75,6 +85,9 @@ const boxStyle = reactive<CSSProperties>({
   left: `${box.left}px`,
 })
 
+// 控制手柄显示的状态
+const showHandles = ref(false)
+
 /**
  * 更新盒子样式
  */
@@ -83,6 +96,7 @@ const updateBoxStyle = () => {
   boxStyle.height = `${box.height}${props.cssUnit}`
   boxStyle.top = `${box.top}px`
   boxStyle.left = `${box.left}px`
+  emits("boxUpdated", { ...box })
 }
 
 // 导入处理拖拽逻辑的方法
@@ -129,6 +143,15 @@ onMounted(() => {
   })
 })
 
+// 监听点击事件，如果点击外部，则隐藏手柄
+window.addEventListener("click", (event) => {
+  // 使用类型断言将 event.target 转换为 Node
+  const target = event.target as Node
+  if (resizableBoxRef.value && !resizableBoxRef.value.contains(target)) {
+    showHandles.value = false
+  }
+})
+
 defineExpose({
   box, // 盒子的状态
   updateBoxStyle, // 更新盒子样式的方法
@@ -147,11 +170,14 @@ defineExpose({
   justify-content: center;
   align-items: center;
   cursor: move;
+  z-index: 999999;
+}
+
+.resizable-box__hover {
   user-select: none;
   outline: 1px solid #4af;
   background-color: #ffffff06;
   box-sizing: content-box;
-  z-index: 999999;
 }
 
 /* 调整手柄样式: 用于拖拽改变盒子大小 */
