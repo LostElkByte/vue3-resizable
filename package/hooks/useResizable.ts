@@ -98,7 +98,7 @@ function adjustWidthAndLeft(
     // 如果插槽内容存在,更新插槽内容的宽度
     if (slotRef) {
       const child = slotRef.children[0] as HTMLElement
-      child.style.width = `${newWidth}px`
+      child.style.width = `${newWidth}${cssUnit}`
     }
     box.left += deltaX
     return
@@ -123,7 +123,7 @@ function adjustWidthAndLeft(
     box.width = minWidth
     if (slotRef) {
       const child = slotRef.children[0] as HTMLElement
-      child.style.width = `${minWidth}px`
+      child.style.width = `${minWidth}${cssUnit}`
     }
     box.left += widthDiff
   }
