@@ -64,17 +64,19 @@ const calculateInitialWidth = (computedProps: ComputedRef<ComputedProps>) => {
  * 该方法确保了盒子的尺寸能够适应内容的变化，特别是当内容包含了需要时间加载的媒体文件时。
  *
  * @param {HTMLElement | null} slotRef - 对插槽的直接引用。如果没有插槽元素，则不执行任何操作。
+ * @param {ComputedRef<ComputedProps>} computedProps - 包含尺寸属性的对象，具体包括`minWidth`、`initialWidth`和`maxWidth`。
  * @param {{ width: number; height: number }} box - 一个对象，包含了盒子的宽度和高度属性，这些属性将根据内容的加载情况被更新。
  * @param {() => void} updateBoxStyle - 一个函数，被调用来更新盒子的样式。通常，此函数会在盒子尺寸更新后执行，以应用新的尺寸值。
  *
  * 使用示例:
  * ```typescript
- * updateBoxSizeAfterAllElementsLoad(slotElementRef, box, updateBoxStyleFunction);
+ * updateBoxSizeAfterAllElementsLoad(slotElementRef, computedProps, box, updateBoxStyleFunction);
  * ```
  * 其中`slotElementRef`是插槽元素的引用，`box`是一个包含初始尺寸的对象，`updateBoxStyleFunction`是更新盒子样式的函数。
  */
 const updateBoxSizeAfterAllElementsLoad = (
   slotRef: HTMLElement | null,
+  computedProps: ComputedRef<ComputedProps>,
   box: { width: number; height: number },
   updateBoxStyle: () => void
 ) => {
@@ -94,7 +96,11 @@ const updateBoxSizeAfterAllElementsLoad = (
     // 更新盒子尺寸
     const updateSize = () => {
       box.width = slotElement.offsetWidth
+        ? slotElement.offsetWidth
+        : computedProps.value.initialWidth!
       box.height = slotElement.offsetHeight
+        ? slotElement.offsetHeight
+        : computedProps.value.initialHeight!
       updateBoxStyle() // 更新盒子样式的方法
     }
 

@@ -78,10 +78,10 @@ const computedProps = computed<ComputedProps>(() => ({
   minHeight: props.minHeight ?? 30,
   maxWidth: props.maxWidth ?? Infinity,
   maxHeight: props.maxHeight ?? Infinity,
-  initialWidth: props.initialWidth ?? 0,
-  initialHeight: props.initialHeight ?? 0,
-  initialTop: props.initialTop ?? 0,
-  initialLeft: props.initialLeft ?? 0,
+  initialWidth: props.initialWidth ?? 200,
+  initialHeight: props.initialHeight ?? 200,
+  initialTop: props.initialTop ?? 100,
+  initialLeft: props.initialLeft ?? 100,
   cssUnit: props.cssUnit ?? "px",
   showDimension: props.showDimension ?? false,
   showPosition: props.showPosition ?? false,
@@ -210,7 +210,12 @@ onMounted(() => {
   endResize.value = resizableMethods.endResize
 
   // 更新盒子尺寸
-  updateBoxSizeAfterAllElementsLoad(slotRef.value, box, updateBoxStyle)
+  updateBoxSizeAfterAllElementsLoad(
+    slotRef.value,
+    computedProps,
+    box,
+    updateBoxStyle
+  )
 
   // 获取插槽的第一个子元素
   child.value = slotRef.value?.children[0] as HTMLElement
