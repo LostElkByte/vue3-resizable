@@ -2,7 +2,7 @@
 import { type HandleDirection } from "../types/resizable.type"
 import type { ComputedProps } from "./useProps"
 import { boundaryWarning } from "./useWarning"
-import { nextTick, type ComputedRef } from "vue"
+import { nextTick, type ComputedRef, type Ref } from "vue"
 
 // 手柄方向数组，用于v-for循环
 const handles: HandleDirection[] = [
@@ -75,14 +75,14 @@ const calculateInitialWidth = (computedProps: ComputedRef<ComputedProps>) => {
  * 其中`slotElementRef`是插槽元素的引用，`box`是一个包含初始尺寸的对象，`updateBoxStyleFunction`是更新盒子样式的函数。
  */
 const updateBoxSizeAfterAllElementsLoad = (
-  slotRef: HTMLElement | null,
+  slotRef: Ref<HTMLElement | null>,
   computedProps: ComputedRef<ComputedProps>,
   box: { width: number; height: number },
   updateBoxStyle: () => void
 ) => {
   nextTick().then(() => {
     // 获取插槽DOM
-    const slotElement = slotRef
+    const slotElement = slotRef.value
     // 如果插槽内没有元素直接更新样式并结束
     if (!slotElement?.children[0]) {
       updateBoxStyle()

@@ -214,7 +214,7 @@ onMounted(() => {
     box,
     computedProps,
     updateBoxStyle,
-    slotRef.value
+    slotRef
   )
 
   // 将调整大小的相应方法赋值给响应式对象,供模板使用
@@ -223,12 +223,7 @@ onMounted(() => {
   endResize.value = resizableMethods.endResize
 
   // 更新盒子尺寸
-  updateBoxSizeAfterAllElementsLoad(
-    slotRef.value,
-    computedProps,
-    box,
-    updateBoxStyle
-  )
+  updateBoxSizeAfterAllElementsLoad(slotRef, computedProps, box, updateBoxStyle)
 
   // 获取插槽的第一个子元素
   child.value = slotRef.value?.children[0] as HTMLElement

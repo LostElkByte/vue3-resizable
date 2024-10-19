@@ -2,7 +2,7 @@
 import { type HandleDirection, type BoxState } from "../types/resizable.type"
 import type { AnyTouchEvent } from "any-touch"
 import { resizing } from "../hooks/useSharedState"
-import type { ComputedRef } from "vue"
+import type { ComputedRef, Ref } from "vue"
 import type { ComputedProps } from "./useProps"
 
 /**
@@ -14,6 +14,7 @@ import type { ComputedProps } from "./useProps"
  * @param {BoxState} box - 盒子的当前状态，包括高度和顶部位置
  * @param {number} minHeight - 盒子的最小高度限制
  * @param {number | undefined} maxHeight - 最大高度
+ * @param {"px" | "rem" | string} cssUnit - 盒子的CSS单位
  * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustHeightAndTop(
@@ -22,7 +23,7 @@ function adjustHeightAndTop(
   minHeight: number,
   maxHeight: number | undefined,
   cssUnit: "px" | "rem" | string,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 即将要调整到的高度
   const newHeight = box.height - deltaY
@@ -32,8 +33,8 @@ function adjustHeightAndTop(
     box.height = newHeight
 
     // 如果插槽内容存在,更新插槽内容的宽度
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.height = `${newHeight}${cssUnit}`
     }
 
@@ -47,8 +48,8 @@ function adjustHeightAndTop(
     box.height = maxHeight
 
     // 如果插槽内容存在,更新插槽内容的宽度
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.height = `${maxHeight}px`
     }
 
@@ -62,8 +63,8 @@ function adjustHeightAndTop(
     box.height = minHeight
 
     // 如果插槽内容存在,更新插槽内容的宽度
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.height = `${minHeight}px`
     }
 
@@ -80,7 +81,8 @@ function adjustHeightAndTop(
  * @param {BoxState} box - 盒子的当前状态，包括宽度和左侧位置
  * @param {number} minWidth - 盒子的最小宽度限制
  * @param {number | undefined} maxWidth - 最大高度
- * @param {number | undefined} slotRef - 插槽容器DOM
+ * @param {"px" | "rem" | string} cssUnit - 盒子的CSS单位
+ * @param {Ref<HTMLElement | null>} slotRef - 插槽容器DOM
  */
 function adjustWidthAndLeft(
   deltaX: number,
@@ -88,7 +90,7 @@ function adjustWidthAndLeft(
   minWidth: number,
   maxWidth: number | undefined,
   cssUnit: "px" | "rem" | string,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 即将要调整到的宽度
   const newWidth = box.width - deltaX
@@ -96,8 +98,8 @@ function adjustWidthAndLeft(
   if (newWidth >= minWidth && newWidth <= (maxWidth || Infinity)) {
     box.width = newWidth
     // 如果插槽内容存在,更新插槽内容的宽度
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.width = `${newWidth}${cssUnit}`
     }
     box.left += deltaX
@@ -109,8 +111,8 @@ function adjustWidthAndLeft(
     const widthDiff = maxWidth - box.width
     box.width = maxWidth
     // 如果插槽内容存在,更新插槽内容的宽度
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.width = `${maxWidth}${cssUnit}`
     }
     box.left -= widthDiff
@@ -121,8 +123,8 @@ function adjustWidthAndLeft(
   if (newWidth < minWidth) {
     const widthDiff = box.width - minWidth
     box.width = minWidth
-    if (slotRef) {
-      const child = slotRef.children[0] as HTMLElement
+    if (slotRef.value) {
+      const child = slotRef.value.children[0] as HTMLElement
       child.style.width = `${minWidth}${cssUnit}`
     }
     box.left += widthDiff
@@ -137,7 +139,8 @@ function adjustWidthAndLeft(
  * @param {number} deltaX - 水平方向上的位移量. 正值表示增加宽度，负值表示减少宽度
  * @param {number} minWidth - 盒子允许的最小宽度
  * @param {number | undefined} maxWidth - 盒子允许的最大宽度. 如果未定义，则不限制最大宽度
- * @param {number | undefined} slotRef - 插槽容器DOM
+ * @param {"px" | "rem" | string} cssUnit - 盒子的CSS单位
+ * @param {Ref<HTMLElement | null>} slotRef - 插槽容器DOM
  */
 function adjustWidth(
   box: BoxState,
@@ -145,7 +148,7 @@ function adjustWidth(
   minWidth: number,
   maxWidth: number | undefined,
   cssUnit: "px" | "rem" | string,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 即将要调整的宽度
   let newWidth = box.width + deltaX
@@ -162,8 +165,8 @@ function adjustWidth(
   box.width = newWidth
 
   // 如果插槽内容存在,更新插槽内容的宽度
-  if (slotRef) {
-    const child = slotRef.children[0] as HTMLElement
+  if (slotRef.value) {
+    const child = slotRef.value.children[0] as HTMLElement
     child.style.width = `${newWidth}${cssUnit}`
   }
 }
@@ -176,7 +179,8 @@ function adjustWidth(
  * @param {number} deltaY - 垂直方向上的位移量. 正值表示增加高度，负值表示减少高度
  * @param {number} minHeight - 盒子允许的最小高度
  * @param {number | undefined} maxHeight - 盒子允许的最大高度.如果未定义，则不限制最大高度
- * @param {number | undefined} slotRef - 插槽容器DOM
+ * @param {"px" | "rem" | string} cssUnit - 盒子的CSS单位
+ * @param {Ref<HTMLElement | null>} slotRef - 插槽容器DOM
  */
 function adjustHeight(
   box: BoxState,
@@ -184,7 +188,7 @@ function adjustHeight(
   minHeight: number,
   maxHeight: number | undefined,
   cssUnit: "px" | "rem" | string,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 即将要调整到的高度
   let newHeight = box.height + deltaY
@@ -201,8 +205,8 @@ function adjustHeight(
   box.height = newHeight
 
   // 如果插槽内容存在,更新插槽内容的宽度
-  if (slotRef) {
-    const child = slotRef.children[0] as HTMLElement
+  if (slotRef.value) {
+    const child = slotRef.value.children[0] as HTMLElement
     child.style.height = `${newHeight}${cssUnit}`
   }
 }
@@ -214,7 +218,7 @@ function adjustHeight(
  * @param {number} deltaY - Y轴上的位移
  * @param {BoxState} box - 盒子状态
  * @param {ComputedRef<ComputedProps>} - 包含最大最小宽高限制
- * @param {number | undefined} slotRef - 插槽容器DOM
+ * @param {Ref<HTMLElement | null>} slotRef - 插槽容器DOM
  */
 function adjustSize(
   direction: HandleDirection,
@@ -222,7 +226,7 @@ function adjustSize(
   deltaY: number,
   box: BoxState,
   computedProps: ComputedRef<ComputedProps>,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 根据不同的方向调整盒子的尺寸，并确保不小于最小尺寸
   switch (direction) {
@@ -361,7 +365,7 @@ export function useResizable(
   box: BoxState,
   computedProps: ComputedRef<ComputedProps>,
   updateBoxStyle: () => void,
-  slotRef: HTMLElement | null
+  slotRef: Ref<HTMLElement | null>
 ) {
   // 用于跟踪requestAnimationFrame的ID，以便在需要时取消排队的帧
   let frame: number | null = null
