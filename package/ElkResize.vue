@@ -50,7 +50,6 @@ import {
   onMounted,
   onUnmounted,
   computed,
-  type ComputedRef,
   watchEffect,
   watch,
 } from "vue"

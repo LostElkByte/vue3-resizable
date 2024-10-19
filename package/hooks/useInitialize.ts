@@ -1,6 +1,6 @@
 // 导入公共类型定义
 import { type HandleDirection } from "../types/resizable.type"
-import type { Props, ComputedProps } from "./useProps"
+import type { ComputedProps } from "./useProps"
 import { boundaryWarning } from "./useWarning"
 import { nextTick, type ComputedRef } from "vue"
 

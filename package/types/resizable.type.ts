@@ -1,5 +1,3 @@
-import type { ComputedRef } from "vue"
-
 // 定义手柄方向的类型
 export type HandleDirection =
   | "top"
