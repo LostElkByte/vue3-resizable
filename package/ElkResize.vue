@@ -9,10 +9,7 @@
     @panend="endDrag()"
   >
     <!-- 插槽：用于插入自定义内容 -->
-    <div
-      class="content-slot"
-      ref="slotRef"
-    >
+    <div class="content-slot" ref="slotRef">
       <slot></slot>
     </div>
     <!-- 循环生成可拖拽的手柄，用于调整盒子大小 -->
@@ -27,11 +24,10 @@
       @panend="endResize()"
     ></div>
     <!-- 实时尺寸/位置信息显示面板 -->
-    <div
-      v-if="props.showDimension || props.showPosition"
-      class="dimension"
-    >
-      <span v-if="props.showDimension"> Size: {{ box.width }} × {{ box.height }} </span>
+    <div v-if="props.showDimension || props.showPosition" class="dimension">
+      <span v-if="props.showDimension">
+        Size: {{ box.width }} × {{ box.height }}
+      </span>
       <span v-if="props.showPosition">Top: {{ box.top }}</span>
       <span v-if="props.showPosition">Left: {{ box.left }}</span>
     </div>
@@ -39,18 +35,26 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from 'vue'
+defineOptions({
+  name: "ElkResize",
+})
+import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from "vue"
 // 导入用于触摸事件处理的AnyTouch库
-import AnyTouch from 'any-touch'
+import AnyTouch from "any-touch"
 // 导入自定义钩子：用于实现拖拽和调整大小功能
-import { useDraggable } from './hooks/useDraggable'
-import { useResizable } from './hooks/useResizable'
+import { useDraggable } from "./hooks/useDraggable"
+import { useResizable } from "./hooks/useResizable"
 // 导入公共类型定义
-import { type BoxState } from './types/resizable.type'
+import { type BoxState } from "./types/resizable.type"
 // 导入初始化hooks
-import { calculateInitialHeight, calculateInitialWidth, handles, updateBoxSizeAfterAllElementsLoad } from './hooks/useInitialize'
+import {
+  calculateInitialHeight,
+  calculateInitialWidth,
+  handles,
+  updateBoxSizeAfterAllElementsLoad,
+} from "./hooks/useInitialize"
 // 导入props
-import { defaultProps, type Props } from './hooks/useProps'
+import { defaultProps, type Props } from "./hooks/useProps"
 
 // 定义props
 const props = withDefaults(defineProps<Props>(), defaultProps)
@@ -123,6 +127,15 @@ onMounted(() => {
     // 组件卸载时，销毁AnyTouch实例以清理资源
     at.value?.destroy()
   })
+})
+
+defineExpose({
+  box, // 盒子的状态
+  updateBoxStyle, // 更新盒子样式的方法
+  startDrag, // 开始拖拽的方法
+  endDrag, // 拖拽结束的方法
+  startResize, // 开始调整大小的方法
+  endResize, // 调整大小结束的方法
 })
 </script>
 

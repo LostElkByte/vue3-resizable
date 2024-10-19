@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "any-touch": "^2.2.0",
-    "vue": "^3.4.21"
+    "vue": "^3.4.29"
   },
   "keywords": [
     "vue",
