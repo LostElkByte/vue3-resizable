@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'vue'
+import type { CSSProperties } from "vue"
 
 // props 接口
 interface Props {
@@ -23,12 +23,27 @@ interface Props {
   /** 拖拽点样式, 应为一个CSS对象 */
   handleStyle?: CSSProperties
   /** 宽高单位, 可以是 'px' | 'rem' */
-  cssUnit?: 'px' | 'rem' | string
+  cssUnit?: "px" | "rem" | string
   /** 显示尺寸信息, 默认是false */
   showDimension?: boolean
   /** 显示位置信息, 默认是false */
   showPosition?: boolean
 }
+
+type ComputedProps = Pick<
+  Props,
+  | "minWidth"
+  | "minHeight"
+  | "maxWidth"
+  | "maxHeight"
+  | "initialWidth"
+  | "initialHeight"
+  | "initialTop"
+  | "initialLeft"
+  | "cssUnit"
+  | "showDimension"
+  | "showPosition"
+>
 
 // 定义props的默认值
 const defaultProps = {
@@ -38,9 +53,9 @@ const defaultProps = {
   initialHeight: 200,
   initialTop: 100,
   initialLeft: 100,
-  cssUnit: 'px',
+  cssUnit: "px",
   showDimension: false,
   showPosition: false,
 }
 
-export { defaultProps, type Props }
+export { defaultProps, type Props, type ComputedProps }

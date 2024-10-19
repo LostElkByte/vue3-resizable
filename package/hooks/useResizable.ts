@@ -1,7 +1,9 @@
 // useResizable.ts
-import { type HandleDirection, type BoxState } from '../types/resizable.type'
-import type { AnyTouchEvent } from 'any-touch'
-import { resizing } from '../hooks/useSharedState'
+import { type HandleDirection, type BoxState } from "../types/resizable.type"
+import type { AnyTouchEvent } from "any-touch"
+import { resizing } from "../hooks/useSharedState"
+import type { ComputedRef } from "vue"
+import type { ComputedProps } from "./useProps"
 
 /**
  * 根据垂直方向的位移调整盒子的高度和顶部位置
@@ -207,10 +209,7 @@ function adjustHeight(
  * @param {number} deltaX - X轴上的位移
  * @param {number} deltaY - Y轴上的位移
  * @param {BoxState} box - 盒子状态
- * @param {number} minWidth - 最小宽度
- * @param {number} minHeight - 最小高度
- * @param {number | undefined} maxWidth - 最大宽度
- * @param {number | undefined} maxHeight - 最大高度
+ * @param {ComputedRef<ComputedProps>} - 包含最大最小宽高限制
  * @param {number | undefined} slotRef - 插槽容器DOM
  */
 function adjustSize(
@@ -218,49 +217,118 @@ function adjustSize(
   deltaX: number,
   deltaY: number,
   box: BoxState,
-  minWidth: number,
-  minHeight: number,
-  maxWidth: number | undefined,
-  maxHeight: number | undefined,
+  computedProps: ComputedRef<ComputedProps>,
   slotRef: HTMLElement | null
 ) {
   // 根据不同的方向调整盒子的尺寸，并确保不小于最小尺寸
   switch (direction) {
     // 处理上方向调整大小
-    case 'top':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
+    case "top":
+      adjustHeightAndTop(
+        deltaY,
+        box,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
       break
     // 处理下方向调整大小
-    case 'bottom':
-      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
+    case "bottom":
+      adjustHeight(
+        box,
+        deltaY,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
       break
     // 处理右方向调整大小
-    case 'right':
-      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
+    case "right":
+      adjustWidth(
+        box,
+        deltaX,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
     // 处理左方向调整大小
-    case 'left':
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
+    case "left":
+      adjustWidthAndLeft(
+        deltaX,
+        box,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
     // 处理右上角方向调整大小
-    case 'top-right':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
-      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
+    case "top-right":
+      adjustHeightAndTop(
+        deltaY,
+        box,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
+      adjustWidth(
+        box,
+        deltaX,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
     // 处理左上角方向调整大小
-    case 'top-left':
-      adjustHeightAndTop(deltaY, box, minHeight, maxHeight, slotRef)
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
+    case "top-left":
+      adjustHeightAndTop(
+        deltaY,
+        box,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
+      adjustWidthAndLeft(
+        deltaX,
+        box,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
     // 处理右下角方向调整大小
-    case 'bottom-right':
-      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
-      adjustWidth(box, deltaX, minWidth, maxWidth, slotRef)
+    case "bottom-right":
+      adjustHeight(
+        box,
+        deltaY,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
+      adjustWidth(
+        box,
+        deltaX,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
     // 处理左下角方向调整大小
-    case 'bottom-left':
-      adjustHeight(box, deltaY, minHeight, maxHeight, slotRef)
-      adjustWidthAndLeft(deltaX, box, minWidth, maxWidth, slotRef)
+    case "bottom-left":
+      adjustHeight(
+        box,
+        deltaY,
+        computedProps.value.minHeight!,
+        computedProps.value.maxHeight,
+        slotRef
+      )
+      adjustWidthAndLeft(
+        deltaX,
+        box,
+        computedProps.value.minWidth!,
+        computedProps.value.maxWidth,
+        slotRef
+      )
       break
   }
 }
@@ -268,20 +336,14 @@ function adjustSize(
 /**
  * 提供可调整大小的功能，允许通过拖拽改变盒子的尺寸
  * @param {BoxState} box - 盒子宽高以及位置
- * @param {number} minWidth - 最小宽度限制
- * @param {number} minHeight - 最小高度限制
- * @param {number | undefined} maxWidth - 最大宽度限制
- * @param {number | undefined} maxHeight - 最大高度限制
+ * @param {ComputedRef<ComputedProps>} - 包含最大最小宽高限制
  * @param {Function} updateBoxStyle - 一个回调函数，用于在盒子尺寸或位置变化后更新其样式
  * @returns {Object} 包含`onResize`、`startResize`和`endResize`三个方法的对象，用于处理拖拽开始、进行中和结束时的逻辑
  * @param {number | undefined} slotRef - 插槽容器DOM
  */
 export function useResizable(
   box: BoxState,
-  minWidth: number,
-  minHeight: number,
-  maxWidth: number | undefined,
-  maxHeight: number | undefined,
+  computedProps: ComputedRef<ComputedProps>,
   updateBoxStyle: () => void,
   slotRef: HTMLElement | null
 ) {
@@ -308,10 +370,7 @@ export function useResizable(
         event.deltaX,
         event.deltaY,
         box,
-        minWidth,
-        minHeight,
-        maxWidth,
-        maxHeight,
+        computedProps,
         slotRef
       )
       // 更新盒子样式

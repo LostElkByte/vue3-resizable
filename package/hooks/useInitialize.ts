@@ -1,19 +1,19 @@
 // 导入公共类型定义
-import { type HandleDirection } from '../types/resizable.type'
-import type { Props } from './useProps'
-import { boundaryWarning } from './useWarning'
-import { nextTick } from 'vue'
+import { type HandleDirection } from "../types/resizable.type"
+import type { Props, ComputedProps } from "./useProps"
+import { boundaryWarning } from "./useWarning"
+import { nextTick, type ComputedRef } from "vue"
 
 // 手柄方向数组，用于v-for循环
 const handles: HandleDirection[] = [
-  'top-left',
-  'top',
-  'top-right',
-  'right',
-  'bottom-right',
-  'bottom',
-  'bottom-left',
-  'left',
+  "top-left",
+  "top",
+  "top-right",
+  "right",
+  "bottom-right",
+  "bottom",
+  "bottom-left",
+  "left",
 ]
 
 /**
@@ -23,15 +23,18 @@ const handles: HandleDirection[] = [
  * 如果`maxHeight`未定义，则使用`Infinity`作为其值。
  * 这确保了计算出的高度不会超过最大允许高度，同时也不会低于最小高度。
  *
- * @param {Props} props - 包含尺寸属性的对象，具体包括`minHeight`、`initialHeight`和`maxHeight`。
+ * @param { ComputedRef<ComputedProps> } computedProps - 包含尺寸属性的对象，具体包括`minHeight`、`initialHeight`和`maxHeight`。
  * @returns {number} 计算得出的初始化高度值。
  */
 
-const calculateInitialHeight = (props: Props) => {
-  boundaryWarning(props, 'Height')
+const calculateInitialHeight = (computedProps: ComputedRef<ComputedProps>) => {
+  boundaryWarning(computedProps, "Height")
   return Math.min(
-    Math.max(props.initialHeight!, props.minHeight!),
-    props.maxHeight || Infinity
+    Math.max(
+      computedProps.value.initialHeight!,
+      computedProps.value.minHeight!
+    ),
+    computedProps.value.maxHeight || Infinity
   )
 }
 
@@ -41,14 +44,14 @@ const calculateInitialHeight = (props: Props) => {
  * 然后根据`minWidth`、`initialWidth`和`maxWidth`的值计算出适当的初始化宽度。
  * 如果`maxWidth`未指定，函数会使用`Infinity`作为其值，以保证计算结果不会超出允许的范围。
  *
- * @param {Props} props - 包含尺寸属性的对象，具体包括`minWidth`、`initialWidth`和`maxWidth`。
+ * @param { ComputedRef<ComputedProps>} computedProps - 包含尺寸属性的对象，具体包括`minWidth`、`initialWidth`和`maxWidth`。
  * @returns {number} 计算得出的初始化宽度值。
  */
-const calculateInitialWidth = (props: Props) => {
-  boundaryWarning(props, 'Width')
+const calculateInitialWidth = (computedProps: ComputedRef<ComputedProps>) => {
+  boundaryWarning(computedProps, "Width")
   return Math.min(
-    Math.max(props.initialWidth!, props.minWidth!),
-    props.maxWidth || Infinity
+    Math.max(computedProps.value.initialWidth!, computedProps.value.minWidth!),
+    computedProps.value.maxWidth || Infinity
   )
 }
 
@@ -85,7 +88,7 @@ const updateBoxSizeAfterAllElementsLoad = (
     }
 
     // 获取插槽内的异步元素
-    const asyncElements = slotElement.querySelectorAll('img, video, iframe')
+    const asyncElements = slotElement.querySelectorAll("img, video, iframe")
     let elementsToLoad = asyncElements.length
 
     // 更新盒子尺寸
@@ -111,21 +114,21 @@ const updateBoxSizeAfterAllElementsLoad = (
         }
       }
 
-      if (element.tagName === 'IMG') {
+      if (element.tagName === "IMG") {
         const img = element as HTMLImageElement
         img.onload = onLoadOrError
         img.onerror = onLoadOrError
         // 检查图片是否已经加载
         if (img.complete) onLoadOrError()
-      } else if (element.tagName === 'VIDEO') {
+      } else if (element.tagName === "VIDEO") {
         const video = element as HTMLVideoElement
         // 检查视频是否已经加载足够的数据
         if (video.readyState > 0) {
           onLoadOrError()
         } else {
-          video.addEventListener('loadeddata', onLoadOrError, { once: true })
+          video.addEventListener("loadeddata", onLoadOrError, { once: true })
         }
-      } else if (element.tagName === 'IFRAME') {
+      } else if (element.tagName === "IFRAME") {
         const iframe = element as HTMLIFrameElement
         iframe.onload = onLoadOrError
       }

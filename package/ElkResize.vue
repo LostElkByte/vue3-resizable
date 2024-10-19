@@ -43,7 +43,17 @@ defineOptions({
   name: "ElkResize",
 })
 
-import { type CSSProperties, ref, reactive, onMounted, onUnmounted } from "vue"
+import {
+  type CSSProperties,
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  computed,
+  type ComputedRef,
+  watchEffect,
+  watch,
+} from "vue"
 // 导入用于触摸事件处理的AnyTouch库
 import AnyTouch from "any-touch"
 // 导入自定义钩子：用于实现拖拽和调整大小功能
@@ -59,10 +69,24 @@ import {
   updateBoxSizeAfterAllElementsLoad,
 } from "./hooks/useInitialize"
 // 导入props
-import { defaultProps, type Props } from "./hooks/useProps"
+import { defaultProps, type Props, type ComputedProps } from "./hooks/useProps"
 
 // 定义props
 const props = withDefaults(defineProps<Props>(), defaultProps)
+
+const computedProps = computed<ComputedProps>(() => ({
+  minWidth: props.minWidth ?? Infinity,
+  minHeight: props.minHeight ?? Infinity,
+  maxWidth: props.maxWidth ?? Infinity,
+  maxHeight: props.maxHeight ?? Infinity,
+  initialWidth: props.initialWidth ?? 0,
+  initialHeight: props.initialHeight ?? 0,
+  initialTop: props.initialTop ?? 0,
+  initialLeft: props.initialLeft ?? 0,
+  cssUnit: props.cssUnit ?? "px",
+  showDimension: props.showDimension ?? false,
+  showPosition: props.showPosition ?? false,
+}))
 
 // 定义要发出的事件
 const emits = defineEmits<{
@@ -70,19 +94,38 @@ const emits = defineEmits<{
 }>()
 
 // 盒子的尺寸和位置
-const box: BoxState = reactive({
-  width: calculateInitialWidth(props),
-  height: calculateInitialHeight(props),
-  top: props.initialTop,
-  left: props.initialLeft,
+const box = reactive<BoxState>({
+  width: calculateInitialWidth(computedProps),
+  height: calculateInitialHeight(computedProps),
+  top: computedProps.value.initialTop!,
+  left: computedProps.value.initialLeft!,
 })
+
+// 监听 computedProps 的变化
+watch(
+  computedProps,
+  () => {
+    box.width = calculateInitialWidth(computedProps)
+    box.height = calculateInitialHeight(computedProps)
+    box.top = computedProps.value.initialTop!
+    box.left = computedProps.value.initialLeft!
+  },
+  { deep: true }
+)
 
 // 盒子样式的响应式对象
 const boxStyle = reactive<CSSProperties>({
-  width: `${box.width}${props.cssUnit}`,
-  height: `${box.height}${props.cssUnit}`,
+  width: `${box.width}${computedProps.value.cssUnit}`,
+  height: `${box.height}${computedProps.value.cssUnit}`,
   top: `${box.top}px`,
   left: `${box.left}px`,
+})
+
+watchEffect(() => {
+  boxStyle.width = `${box.width}${computedProps.value.cssUnit}`
+  boxStyle.height = `${box.height}${computedProps.value.cssUnit}`
+  boxStyle.top = `${box.top}px`
+  boxStyle.left = `${box.left}px`
 })
 
 // 控制手柄显示的状态
@@ -92,8 +135,8 @@ const showHandles = ref(false)
  * 更新盒子样式
  */
 const updateBoxStyle = () => {
-  boxStyle.width = `${box.width}${props.cssUnit}`
-  boxStyle.height = `${box.height}${props.cssUnit}`
+  boxStyle.width = `${box.width}${computedProps.value.cssUnit}`
+  boxStyle.height = `${box.height}${computedProps.value.cssUnit}`
   boxStyle.top = `${box.top}px`
   boxStyle.left = `${box.left}px`
   emits("boxUpdated", { ...box })
@@ -121,10 +164,7 @@ onMounted(() => {
   // 导入处理调整大小的方法
   const resizableMethods = useResizable(
     box,
-    props.minWidth,
-    props.minHeight,
-    props.maxWidth,
-    props.maxHeight,
+    computedProps,
     updateBoxStyle,
     slotRef.value
   )

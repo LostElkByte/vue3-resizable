@@ -1,13 +1,15 @@
+import type { ComputedRef } from "vue"
+
 // 定义手柄方向的类型
 export type HandleDirection =
-  | 'top'
-  | 'bottom'
-  | 'left'
-  | 'right'
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right'
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
 
 // 盒子状态类型
 export interface BoxState {

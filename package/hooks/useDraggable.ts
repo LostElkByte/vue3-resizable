@@ -1,7 +1,7 @@
 // useDraggable.ts
-import { type BoxState } from '../types/resizable.type'
-import { resizing, dragging } from './useSharedState'
-import type { AnyTouchEvent } from 'any-touch'
+import { type BoxState } from "../types/resizable.type"
+import { resizing, dragging } from "./useSharedState"
+import type { AnyTouchEvent } from "any-touch"
 
 /**
  * 提供元素拖拽功能，允许用户通过拖动来改变元素的位置。
