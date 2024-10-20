@@ -1,6 +1,6 @@
 {
   "name": "vue3-resizable",
-  "version": "0.0.0-alpha.3",
+  "version": "1.0.0-alpha",
   "description": "Vue3 is used for components with resizable and draggable elements.",
   "private": false,
   "type": "module",
