@@ -20,33 +20,42 @@
 
 <div align="center">
   <h4>
-    vue3-resizable 是一个基于 Vue 3 的组件库，提供了可调整大小和拖动功能，允许用户通过简单的拖动操作来自定义元素的尺寸和位置。并结合 <a href="https://github.com/any86/any-touch">any-touch</a> 库有效地处理触摸事件，非常适合 PC 以及移动触摸设备。🚀
+     vue3-resizable is a component library based on Vue 3 that provides resizing and dragging features, allowing users to customize the size and position of elements through simple drag operations. It effectively handles touch events in combination with the <a href="https://github.com/any86/any-touch">any-touch</a> library, making it suitable for both PC and mobile touch devices. 🚀
+  </h4>
   </h4>
 </div>
 
 🐳 Vue 3 Composition API
 
-🔥 用 TypeScript 编写
+🔥 Written in TypeScript
 
-## 安装
+[English](README.md) · [简体中文](README.ZH.md)
 
-使用 npm 安装：
+## Installation
+
+Install using npm:
 
 ```bash
 npm install vue3-resizable
 ```
 
-或者使用 yarn：
+Install using pnpm:
+
+```bash
+pnpm install vue3-resizable
+```
+
+Or using yarn:
 
 ```bash
 yarn add vue3-resizable
 ```
 
-## 使用方法
+## Usage
 
-首先，确保在你的 Vue 项目中引入组件：
+First, ensure that you import the component in your Vue project:
 
-#### 全局引用
+#### Global Import
 
 ```javascript
 import { createApp } from "vue"
@@ -60,14 +69,14 @@ app.use(LResize)
 app.mount("#app")
 ```
 
-#### 局部引用
+#### Local Import
 
 ```javascript
 import { LResize } from "vue3-resizable"
 import "vue3-resizable/dist/index.css"
 ```
 
-#### 然后，在你的组件中使用它：
+#### Then, use it in your component:
 
 ```vue
 <template>
@@ -84,33 +93,33 @@ import "vue3-resizable/dist/index.css"
     :showDimension="true"
     :showPosition="true"
   >
-    <!-- 你可以在这里插入任何自定义内容 -->
-    <div>可调整大小的内容容器</div>
+    <!-- You can insert any custom content here -->
+    <div>Resizable content container</div>
   </LResize>
 </template>
 ```
 
 ## Props
 
-| Prop            | 类型                      | 默认值  | 描述             |
-| --------------- | ------------------------- | ------- | ---------------- |
-| `minWidth`      | `number`                  | `30`    | 最小宽度限制     |
-| `minHeight`     | `number`                  | `30`    | 最小高度限制     |
-| `maxWidth`      | `number`                  | `无`    | 最大宽度限制     |
-| `maxHeight`     | `number`                  | `无`    | 最大高度限制     |
-| `initialWidth`  | `number`                  | `200`   | 初始化宽度       |
-| `initialHeight` | `number`                  | `200`   | 初始化高度       |
-| `initialTop`    | `number`                  | `100`   | 初始化上偏移     |
-| `initialLeft`   | `number`                  | `100`   | 初始化左偏移     |
-| `cssUnit`       | `'px' \| 'rem' \| string` | `'px'`  | 宽高单位         |
-| `showDimension` | `boolean`                 | `false` | 是否显示尺寸信息 |
-| `showPosition`  | `boolean`                 | `false` | 是否显示位置信息 |
-| `style`         | `CSSProperties`           | `{}`    | 容器样式         |
-| `handleStyle`   | `CSSProperties`           | `{}`    | 拖拽点样式       |
+| Prop            | 类型                      | 默认值  | 描述                 |
+| --------------- | ------------------------- | ------- | -------------------- |
+| `minWidth`      | `number`                  | `30`    | Minimum width limit  |
+| `minHeight`     | `number`                  | `30`    | Minimum height limit |
+| `maxWidth`      | `number`                  | `none`  | Maximum width limit  |
+| `maxHeight`     | `number`                  | `none`  | Maximum height limit |
+| `initialWidth`  | `number`                  | `200`   | Initial width        |
+| `initialHeight` | `number`                  | `200`   | Initial height       |
+| `initialTop`    | `number`                  | `100`   | Initial top offset   |
+| `initialLeft`   | `number`                  | `100`   | Initial left offset  |
+| `cssUnit`       | `'px' \| 'rem' \| string` | `'px'`  | Size unit            |
+| `showDimension` | `boolean`                 | `false` | Show size info       |
+| `showPosition`  | `boolean`                 | `false` | Show position info   |
+| `style`         | `CSSProperties`           | `{}`    | Container style      |
+| `handleStyle`   | `CSSProperties`           | `{}`    | Drag handle style    |
 
-## 开发者指南
+## Developer Guide
 
-要参与此组件的开发，你可以克隆源代码仓库，并安装所有依赖：
+To contribute to the development of this component, you can clone the source code repository and install all dependencies:
 
 ```bash
 git clone https://github.com/LostElkByte/vue3-resizable.git
@@ -118,10 +127,10 @@ cd vue3-resizable
 npm install
 ```
 
-## 贡献
+## Contribution
 
-欢迎通过发起 Issues 或提交 Pull Requests 来贡献你的代码。请确保你的代码符合项目的代码风格和质量标准。
+Contributions are welcome through Issues or Pull Requests. Please ensure your code follows the project's style and quality standards.
 
-## 许可证
+## License
 
-此项目遵循 MIT 许可证发布。更多信息请查看 `LICENSE` 文件。
+This project is licensed under the MIT License. For more information, please see the LICENSE file.
