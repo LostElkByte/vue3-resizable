@@ -20,7 +20,7 @@
 
 <div align="center">
   <h4>
-     vue3-resizable is a component library based on Vue 3 that provides resizing and dragging features, allowing users to customize the size and position of elements through simple drag operations. It effectively handles touch events in combination with the <a href="https://github.com/any86/any-touch">any-touch</a> library, making it suitable for both PC and mobile touch devices. 🚀
+     vue3-resizable is a component based on Vue 3 that provides resizing and dragging features, allowing users to customize the size and position of elements through simple drag operations. It effectively handles touch events in combination with the <a href="https://github.com/any86/any-touch">any-touch</a> library, making it suitable for both PC and mobile touch devices. 🚀
   </h4>
   </h4>
 </div>

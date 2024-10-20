@@ -20,7 +20,7 @@
 
 <div align="center">
   <h4>
-    vue3-resizable 是一个基于 Vue 3 的组件库，提供了可调整大小和拖动功能，允许用户通过简单的拖动操作来自定义元素的尺寸和位置。并结合 <a href="https://github.com/any86/any-touch">any-touch</a> 库有效地处理触摸事件，非常适合 PC 以及移动触摸设备。🚀
+    vue3-resizable 是一个基于 Vue 3 的组件，提供了可调整大小和拖动功能，允许用户通过简单的拖动操作来自定义元素的尺寸和位置。并结合 <a href="https://github.com/any86/any-touch">any-touch</a> 库有效地处理触摸事件，非常适合 PC 以及移动触摸设备。🚀
   </h4>
 </div>
 
