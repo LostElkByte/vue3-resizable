@@ -1,22 +1,29 @@
 // useDraggable.ts
+import type { ComputedRef } from "vue"
 import { type BoxState } from "../types/resizable.type"
 import { resizing, dragging } from "./useSharedState"
 import type { AnyTouchEvent } from "any-touch"
+import type { ComputedProps } from "./useProps"
 
 /**
  * 提供元素拖拽功能，允许用户通过拖动来改变元素的位置。
  * @param {BoxState} box - 盒子宽高以及位置
  * @param {Function} updateBoxStyle - 当盒子的位置改变时，用于更新盒子样式的回调函数。
+ * @param {Object} computedProps - props计算属性
  * @returns {Object} 包含startDrag、onDragging和endDrag方法的对象，用于处理拖拽的开始、进行和结束。
  */
-export function useDraggable(box: BoxState, updateBoxStyle: () => void) {
+export function useDraggable(
+  box: BoxState,
+  computedProps: ComputedRef<ComputedProps>,
+  updateBoxStyle: () => void
+) {
   // 用于跟踪requestAnimationFrame的ID，以便在需要时取消排队的动画帧。
   let frame: number | null = null
 
   // 拖拽开始
   const startDrag = () => {
     // 设置盒子层级为最大
-    box.zIndex = 10000000
+    box.zIndex = computedProps.value.zIndex! + 10000000
     // 设置拖拽状态为true
     dragging.value = true
   }
@@ -43,7 +50,7 @@ export function useDraggable(box: BoxState, updateBoxStyle: () => void) {
   // 拖拽结束
   const endDrag = () => {
     // 设置盒子层级为默认
-    box.zIndex = 9999999
+    box.zIndex = computedProps.value.zIndex!
     // 重置调整大小的状态
     dragging.value = false
     // 取消排队的帧，以防止额外的回调执行

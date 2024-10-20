@@ -28,6 +28,8 @@ interface Props {
   showDimension?: boolean
   /** 显示位置信息, 默认是false */
   showPosition?: boolean
+  /** 盒子的默认z-index */
+  zIndex?: number
 }
 
 type ComputedProps = Pick<
@@ -43,6 +45,7 @@ type ComputedProps = Pick<
   | "cssUnit"
   | "showDimension"
   | "showPosition"
+  | "zIndex"
 >
 
 // 定义props的默认值
@@ -56,6 +59,7 @@ const defaultProps = {
   cssUnit: "px",
   showDimension: false,
   showPosition: false,
+  zIndex: 1,
 }
 
 export { defaultProps, type Props, type ComputedProps }

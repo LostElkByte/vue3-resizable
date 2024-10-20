@@ -17,9 +17,9 @@
     <template v-if="showHandles">
       <div
         class="handle"
+        :style="[handleStyle, { zIndex: computedProps.zIndex! + 1 }]"
         v-for="handle in handles"
         :key="handle"
-        :style="handleStyle"
         :class="`handle-${handle}`"
         @pan="onResize($event, handle)"
         @panstart="startResize()"
@@ -88,6 +88,7 @@ const computedProps = computed<ComputedProps>(() => ({
   cssUnit: props.cssUnit ?? "px",
   showDimension: props.showDimension ?? false,
   showPosition: props.showPosition ?? false,
+  zIndex: props.zIndex ?? 1,
 }))
 
 // 定义要发出的事件
@@ -101,7 +102,7 @@ const box = reactive<BoxState>({
   height: calculateInitialHeight(computedProps),
   top: computedProps.value.initialTop!,
   left: computedProps.value.initialLeft!,
-  zIndex: 9999999,
+  zIndex: computedProps.value.zIndex ?? 1,
 })
 
 // 监听 box.width
@@ -144,6 +145,14 @@ watch(
   }
 )
 
+// 监听 box.zIndex
+watch(
+  () => computedProps.value.zIndex,
+  (newValue) => {
+    box.zIndex = newValue!
+  }
+)
+
 // 盒子样式的响应式对象
 const boxStyle = reactive<CSSProperties>({
   width: `${box.width}${computedProps.value.cssUnit}`,
@@ -173,7 +182,11 @@ const updateBoxStyle = () => {
 }
 
 // 导入处理拖拽逻辑的方法
-const { startDrag, onDragging, endDrag } = useDraggable(box, updateBoxStyle)
+const { startDrag, onDragging, endDrag } = useDraggable(
+  box,
+  computedProps,
+  updateBoxStyle
+)
 
 // 控制手柄显示的状态
 const showHandles = ref(false)
