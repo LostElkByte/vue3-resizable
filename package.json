@@ -1,6 +1,6 @@
 {
   "name": "vue3-resizable",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-alpha.3",
   "description": "Vue3 is used for components with resizable and draggable elements.",
   "private": false,
   "type": "module",
@@ -44,7 +44,7 @@
     "component",
     "调整大小"
   ],
-  "homepage": "https://github.com/LostElkByte/vue3-resizable",
+  "homepage": "https://lostelkbyte.github.io/vue3-resizable/",
   "bugs": "https://github.com/LostElkByte/vue3-resizable/issues",
   "license": "MIT",
   "scripts": {

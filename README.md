@@ -29,7 +29,9 @@
 
 🔥 Written in TypeScript
 
-[English](README.md) · [简体中文](README.ZH.md)
+[English](README.md) · [简体中文](README.ZH.md) · [Demo/Document](https://lostelkbyte.github.io/vue3-resizable/)
+
+<!-- [English](https://www.npmjs.com/package/vue3-resizable#vue3-resizable) · [简体中文](https://github.com/LostElkByte/vue3-resizable/blob/main/README.ZH.md) · [Demo/Document](https://lostelkbyte.github.io/vue3-resizable/) -->
 
 ## Installation
 

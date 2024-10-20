@@ -28,7 +28,7 @@
 
 🔥 用 TypeScript 编写
 
-[English](README.md) · [简体中文](README.ZH.md)
+[English](README.md) · [简体中文](README.ZH.md) · [Demo/文档](https://lostelkbyte.github.io/vue3-resizable/)
 
 ## 安装
 
