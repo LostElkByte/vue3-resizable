@@ -1,11 +1,20 @@
 import type { App } from "vue"
-import ElkResize from "./ElkResize.vue"
+import LResize from "./LResize.vue"
 
 // 使用install方法，在app.use挂载
-ElkResize.install = (app: App) => {
-  app.component(ElkResize.name as string, ElkResize)
+LResize.install = (app: App) => {
+  app.component(LResize.name as string, LResize)
 }
 
-export default ElkResize
+const components = [LResize]
+const install = (app: any) => {
+  components.map((component) => {
+    app.component(component.name, component)
+  })
+}
 
-export * from "./types/resizable.type"
+export { install, LResize }
+
+export default {
+  install,
+}

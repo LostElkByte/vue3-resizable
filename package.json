@@ -1,51 +1,40 @@
 {
   "name": "vue3-resizable",
-  "version": "0.0.0-alpha.2",
+  "version": "0.0.0-alpha.3",
   "description": "Vue3 is used for components with resizable and draggable elements.",
   "private": false,
   "type": "module",
-  "main": "./dist/elk-resize.umd.cjs",
-  "module": "./dist/elk-resize.js",
-  "unpkg": "./dist/elk-resize.umd.cjs",
+  "main": "./dist/umd/l-resize.umd.js",
+  "module": "./dist/es/l-resize.js",
+  "unpkg": "./dist/umd/l-resize.umd.js",
+  "sideEffects": [
+    "dist/index.css"
+  ],
   "exports": {
     ".": {
-      "types": "./dist/elk-resize.d.ts",
-      "import": "./dist/elk-resize.js",
-      "require": "./dist/elk-resize.umd.cjs"
+      "import": "./dist/es/l-resize.js",
+      "require": "./dist/umd/l-resize.umd.js",
+      "types": "./dist/types/index.d.ts"
     },
-    "./style.css": {
-      "import": "./dist/style.css",
-      "require": "./dist/style.css"
+    "./dist/": {
+      "import": "./dist/",
+      "require": "./dist/"
     }
   },
   "typesVersions": {
     "*": {
       "*": [
         "./dist/*",
-        "./dist/elk-resize.d.ts"
+        "./dist/types/index.d.ts"
       ]
     }
   },
   "files": [
-    "dist",
-    "package.json",
-    "README.md"
+    "dist"
   ],
   "author": {
     "name": "LostElk",
     "email": "lostelk.email@gmail.com"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
-  },
-  "dependencies": {
-    "any-touch": "^2.2.0",
-    "vue": "^3.4.29"
   },
   "keywords": [
     "vue",
@@ -58,6 +47,22 @@
   "homepage": "https://github.com/LostElkByte/vue3-resizable",
   "bugs": "https://github.com/LostElkByte/vue3-resizable/issues",
   "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build-only && npm run move-style",
+    "preview": "vite preview",
+    "build-only": "run-p build-umd build-es",
+    "build-umd": "vite build --config vite.umd.config.ts",
+    "build-es": "vite build --config vite.es.config.ts",
+    "move-style": "mv dist/es/index.css dist/index.css",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "any-touch": "^2.2.0",
+    "vue": "^3.4.29"
+  },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",
     "@tsconfig/node20": "^20.1.2",

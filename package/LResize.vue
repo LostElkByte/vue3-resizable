@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 defineOptions({
-  name: "ElkResize",
+  name: "LResize",
 })
 
 import {
