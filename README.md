@@ -67,7 +67,7 @@ import { LResize } from "vue3-resizable"
 import "vue3-resizable/dist/index.css"
 ```
 
-####然后，在你的组件中使用它：
+#### 然后，在你的组件中使用它：
 
 ```vue
 <template>
