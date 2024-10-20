@@ -18,3 +18,6 @@ export { install, LResize }
 export default {
   install,
 }
+
+export * from "./types/resizable.type"
+export * from "./hooks/useProps"
