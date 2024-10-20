@@ -116,6 +116,38 @@ import "vue3-resizable/dist/index.css"
 | `style`         | `CSSProperties`           | `{}`    | 容器样式         |
 | `handleStyle`   | `CSSProperties`           | `{}`    | 拖拽点样式       |
 
+## Slots
+
+| 插槽名  | 说明           |
+| ------- | -------------- |
+| default | 插入自定义内容 |
+
+## Events
+
+| 事件名     | 说明                       | 参数       |
+| ---------- | -------------------------- | ---------- |
+| boxUpdated | 当盒子尺寸或位置更新时触发 | `BoxState` |
+
+## BoxState 参数
+
+| 参数名   | 类型     | 说明              |
+| -------- | -------- | ----------------- |
+| `width`  | `number` | 盒子的宽度        |
+| `height` | `number` | 盒子的高度        |
+| `top`    | `number` | 盒子的顶部位置    |
+| `left`   | `number` | 盒子的左侧位置    |
+| `zIndex` | `number` | 盒子的 z-index 值 |
+
+## Exposes
+
+| 方法名         | 说明         | 参数         |
+| -------------- | ------------ | ------------ |
+| updateBoxStyle | 更新盒子样式 | `() => void` |
+| startDrag      | 开始拖拽     | `() => void` |
+| endDrag        | 拖拽结束     | `() => void` |
+| startResize    | 开始调整大小 | `() => void` |
+| endResize      | 调整大小结束 | `() => void` |
+
 ## 开发者指南
 
 要参与此组件的开发，你可以克隆源代码仓库，并安装所有依赖：

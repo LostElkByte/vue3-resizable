@@ -1,28 +1,43 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from "vitepress"
+import { fileURLToPath, URL } from "node:url"
+import vueJsx from "@vitejs/plugin-vue-jsx"
+import {
+  containerPreview,
+  componentPreview,
+} from "@vitepress-demo-preview/plugin"
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: "/vue3-resizable/",
   title: "vue3-resizable",
-  description: "A VitePress Site",
+  description: "一个基于 Vue 3 的组件，提供调整大小和拖动功能。",
+  head: [["link", { rel: "icon", href: "/lost-ui/favicon.ico" }]],
+  vite: {
+    plugins: [vueJsx() as any],
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("../../src", import.meta.url)),
+      },
+    },
+  },
+  markdown: {
+    config(md) {
+      md.use(containerPreview)
+      md.use(componentPreview)
+    },
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
+      { text: "主页", link: "/" },
+      { text: "快速安装", link: "/install" },
+      { text: "文档示例", link: "/document" },
     ],
 
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      }
-    ],
+    sidebar: [],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
-    ]
-  }
+      { icon: "github", link: "https://github.com/vuejs/vitepress" },
+    ],
+  },
 })

@@ -117,6 +117,38 @@ import "vue3-resizable/dist/index.css"
 | `style`         | `CSSProperties`           | `{}`    | Container style      |
 | `handleStyle`   | `CSSProperties`           | `{}`    | Drag handle style    |
 
+## Slots
+
+| Slot Name | Description           |
+| --------- | --------------------- |
+| default   | Insert custom content |
+
+## Events
+
+| Event Name | Description                                        | Parameters |
+| ---------- | -------------------------------------------------- | ---------- |
+| boxUpdated | Triggered when the box size or position is updated | `BoxState` |
+
+## BoxState Parameters
+
+| Parameter Name | Type     | Description              |
+| -------------- | -------- | ------------------------ |
+| `width`        | `number` | Width of the box         |
+| `height`       | `number` | Height of the box        |
+| `top`          | `number` | Top position of the box  |
+| `left`         | `number` | Left position of the box |
+| `zIndex`       | `number` | z-index value of the box |
+
+## Exposes
+
+| Method Name    | Description      | Parameters   |
+| -------------- | ---------------- | ------------ |
+| updateBoxStyle | Update box style | `() => void` |
+| startDrag      | Start dragging   | `() => void` |
+| endDrag        | End dragging     | `() => void` |
+| startResize    | Start resizing   | `() => void` |
+| endResize      | End resizing     | `() => void` |
+
 ## Developer Guide
 
 To contribute to the development of this component, you can clone the source code repository and install all dependencies:
